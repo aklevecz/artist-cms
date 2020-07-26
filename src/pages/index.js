@@ -4,7 +4,7 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import SVG from "react-inlinesvg"
 import elu from "./elu.svg"
-
+import im from "../../static/img/doors-02.jpg"
 const buttonCreator = (id, index) => {
   const element = document.querySelector(`#${id}`)
   element.setAttribute("class", "button")
@@ -28,6 +28,7 @@ const IndexPage = () => {
   return (
     <Layout>
       <SEO title="Home" />
+      <img src={im} />
       <SVG src={elu} onLoad={setupButtons} />
     </Layout>
   )
