@@ -9,10 +9,9 @@ collections:
   - name: "artist"
     label: "Artist"
     folder: "models/artist"
+    extension: "json"
     create: true
     slug: "index"
-    media_folder: ""
-    public_folder: ""
     path: "{{name}}/index"
     editor:
       preview: false
