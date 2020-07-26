@@ -18,7 +18,9 @@ const buttonCreator = (id, index) => {
 
 const IndexPage = () => {
   const elu =
-    window.innerWidth > 768 ? require("./elu_desk.svg") : require("./elu.svg")
+    window && window.innerWidth > 768
+      ? require("./elu_desk.svg")
+      : require("./elu.svg")
   const setupButtons = () => {
     buttonCreator("soundcloud", 1)
     buttonCreator("spotify", 2)
