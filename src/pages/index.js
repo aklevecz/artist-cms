@@ -1,10 +1,8 @@
 import React from "react"
-
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import SVG from "react-inlinesvg"
-import elu from "./elu.svg"
-import im from "../../static/img/doors-02.jpg"
+
 const buttonCreator = (id, index) => {
   const element = document.querySelector(`#${id}`)
   element.setAttribute("class", "button")
@@ -19,6 +17,8 @@ const buttonCreator = (id, index) => {
 }
 
 const IndexPage = () => {
+  const elu =
+    window.innerWidth > 768 ? require("./elu_desk.svg") : require("./elu.svg")
   const setupButtons = () => {
     buttonCreator("soundcloud", 1)
     buttonCreator("spotify", 2)
@@ -28,7 +28,6 @@ const IndexPage = () => {
   return (
     <Layout>
       <SEO title="Home" />
-      <img src={im} />
       <SVG src={elu} onLoad={setupButtons} />
     </Layout>
   )

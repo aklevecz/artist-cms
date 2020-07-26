@@ -6,18 +6,18 @@ media_folder: static/img
 public_folder: /img
 
 collections:
-  - name: "blog"
-    label: "Blog"
-    folder: "content/blog"
+  - name: "artist"
+    label: "Artist"
+    folder: "models/artist"
     create: true
     slug: "index"
     media_folder: ""
     public_folder: ""
-    path: "{{title}}/index"
+    path: "{{name}}/index"
     editor:
       preview: false
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Publish Date", name: "date", widget: "datetime" }
-      - { label: "Description", name: "description", widget: "string" }
-      - { label: "Body", name: "body", widget: "markdown" }
+      - { label: "Spotify", name: "spotify", widget: "string" }
+      - { label: "Instagram", name: "instagram", widget: "string" }
+      - { label: "Souncloud", name: "soundcloud", widget: "string" }
+      - { label: "Bandcamp", name: "bandcamp", widget: "string" }
