@@ -17,6 +17,7 @@ collections:
     editor:
       preview: false
     fields:
+      - { label: "Name", name: "name", widget: "string" }
       - { label: "Spotify", name: "spotify", widget: "string" }
       - { label: "Instagram", name: "instagram", widget: "string" }
       - { label: "Souncloud", name: "soundcloud", widget: "string" }
