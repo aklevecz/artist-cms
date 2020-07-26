@@ -2,7 +2,12 @@ backend:
   name: git-gateway
   branch: master
 
-media_folder: static/img
+media_library:
+  name: cloudinary
+  config:
+    cloud_name: artists
+    api_key: 118677734871395
+media_folder: /static/img
 public_folder: /img
 
 collections:
@@ -12,7 +17,7 @@ collections:
     extension: "json"
     create: true
     slug: "index"
-    path: "{{name}}/index"
+    path: "{{name}}/data"
     editor:
       preview: false
     fields:

@@ -1,7 +1,32 @@
-/**
- * Implement Gatsby's Node APIs in this file.
- *
- * See: https://www.gatsbyjs.org/docs/node-apis/
- */
+const path = require(`path`)
 
-// You can delete this file if you're not using it
+exports.createPages = ({ graphql, actions }) => {
+  const { createPage } = actions
+  const template = path.resolve(`src/templates/artist.js`)
+
+  return graphql(`
+    query loadArtistQuery {
+      allJsonFiles {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  `).then(result => {
+    if (result.errors) {
+      throw result.errors
+    }
+    result.data.allJsonFiles.edges.forEach(edges => {
+      createPage({
+        path: `${edges.node.name.toLowerCase()}`,
+        component: template,
+        context: {
+          frogs: "frogs",
+          regexName: `/^${edges.node.name}$/i`,
+        },
+      })
+    })
+  })
+}
