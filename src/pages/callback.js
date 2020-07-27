@@ -1,7 +1,4 @@
 import React from "react"
-
-const bb =
-  "Mzc2NDdmMzNlNzA0NDRkYmIxYzU3ODYzZTA5OTkzOGQ6YzQyZjhkODM4ZjE2NGQ5MTg5MmJhNzdkOWE3NTk1ZjE"
 const Callback = () => {
   const code = window.location.search.split("?code=")[1]
   const redirect_uri = "http://localhost:8000/callback"
@@ -10,7 +7,7 @@ const Callback = () => {
       redirect_uri
     )}`,
     headers: {
-      Authorization: "Basic " + bb,
+      Authorization: "Basic " + process.env.GATSBY_BB,
       "Content-Type": "application/x-www-form-urlencoded",
     },
     method: "POST",
