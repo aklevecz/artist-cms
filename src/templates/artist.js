@@ -1,8 +1,9 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { graphql } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import SVG from "react-inlinesvg"
+import Spotify from "../components/spotify"
 
 export const query = graphql`
   query($regexName: String!, $cloudinaryArtist: String!) {
@@ -37,6 +38,8 @@ const createLink = (site, tag) => {
 }
 
 const Artist = props => {
+  console.log(localStorage.getItem("arcsasT"))
+  console.log(props)
   if (typeof window === "undefined") return <div></div>
   const isDesk = window.innerWidth > 768
   const elu = isDesk ? require("./elu_desk.svg") : require("./elu.svg")
@@ -88,7 +91,6 @@ const Artist = props => {
     }
 
     const client_id = "68ca93c0637a090be108eb8c8f3f8729"
-    console.log(window.SC)
     if (!window.SC) return
     const SC = window.SC
     SC.initialize({
@@ -104,6 +106,7 @@ const Artist = props => {
   return (
     <Layout>
       <SEO title="Home" />
+      <Spotify />
       <SVG src={elu} onLoad={setupButtons} />
     </Layout>
   )

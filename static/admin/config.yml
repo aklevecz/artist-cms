@@ -26,3 +26,8 @@ collections:
       - { label: "Instagram", name: "instagram", widget: "string" }
       - { label: "Souncloud", name: "soundcloud", widget: "string" }
       - { label: "Bandcamp", name: "bandcamp", widget: "string" }
+      - {
+          label: "Curated Playlist",
+          name: "curated_playlist",
+          widget: "string",
+        }
