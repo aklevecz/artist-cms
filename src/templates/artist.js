@@ -38,8 +38,6 @@ const createLink = (site, tag) => {
 }
 
 const Artist = props => {
-  console.log(localStorage.getItem("arcsasT"))
-  console.log(props)
   if (typeof window === "undefined") return <div></div>
   const isDesk = window.innerWidth > 768
   const elu = isDesk ? require("./elu_desk.svg") : require("./elu.svg")
