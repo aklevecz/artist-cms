@@ -1,5 +1,6 @@
 import React from "react"
 const Callback = () => {
+  if (typeof window === "undefined") return <div></div>
   const code = window.location.search.split("?code=")[1]
   const redirect_uri = "http://localhost:8000/callback"
   fetch("https://accounts.spotify.com/api/token", {
