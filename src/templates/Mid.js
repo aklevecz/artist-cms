@@ -11,7 +11,10 @@ const Mid = ({ svg }) => {
     listenButton.onclick = () => context.initSoundcloud()
   }
   return (
-    <SVG src={svg.replace("/q_auto,f_auto", "")} onLoad={setupMidButtons} />
+    <SVG
+      src={svg.replace("/q_auto,f_auto", "").replace("http", "https")}
+      onLoad={setupMidButtons}
+    />
   )
 }
 
