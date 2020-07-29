@@ -19,12 +19,13 @@ exports.createPages = ({ graphql, actions }) => {
       throw result.errors
     }
     result.data.allJsonFiles.edges.forEach(edges => {
-      console.log(`Artists/${edges.node.name.toLowerCase()}`)
+      const name = edges.node.name.toLowerCase().split(" ").join("-")
       createPage({
-        path: `${edges.node.name.toLowerCase()}`,
+        path: `${name}`,
         component: template,
         context: {
-          cloudinaryArtist: `Artists/${edges.node.name.toLowerCase()}`,
+          profileUrl: `Artists/${name}/profile`,
+          midUrl: `Artists/${name}/MID`,
           regexName: `/^${edges.node.name}$/i`,
         },
       })

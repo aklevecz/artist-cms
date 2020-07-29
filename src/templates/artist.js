@@ -1,111 +1,85 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { graphql } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import SVG from "react-inlinesvg"
-import Spotify from "../components/spotify"
-
+import getPlaylistTracks from "../services/get-playlist-tracks"
+import Playlist from "../components/playlist"
+import "./artist.scss"
+import Top from "./Top"
+import Mid from "./Mid"
+import { releasesButton, playlistButton } from "./selectors"
+import Player from "../components/player"
 export const query = graphql`
-  query($regexName: String!, $cloudinaryArtist: String!) {
+  query($regexName: String!, $profileUrl: String!, $midUrl: String!) {
     jsonFiles(name: { regex: $regexName }) {
       name
       spotify
       soundcloud
       instagram
       bandcamp
+      curated_playlist
     }
-    cloudinaryMedia(public_id: { eq: $cloudinaryArtist }) {
+    profile: cloudinaryMedia(public_id: { eq: $profileUrl }) {
+      url
+    }
+    mid: cloudinaryMedia(public_id: { eq: $midUrl }) {
       url
     }
   }
 `
 
-const createLink = (site, tag) => {
-  switch (site) {
-    case "soundcloud":
-      return `https://soundcloud.com/${tag}`
-    case "spotify":
-      return `https://open.spotify.com/artist/${
-        tag.split("spotify:artist:")[1]
-      }`
-    case "instagram":
-      return `https://instagram.com/${tag}`
-    case "bandcamp":
-      return `${tag}`
-    default:
-      return ""
-  }
+const viewStates = {
+  RELEASES: "releases",
+  PLAYLIST: "playlist",
+  ABOUT: "about",
 }
 
 const Artist = props => {
+  const [tracks, setTracks] = useState()
+  const [view, setView] = useState(viewStates.RELEASES)
+  useEffect(() => {
+    const RELEASE_BOX = document.querySelector("#RELEASES")
+    if (!RELEASE_BOX) return
+    if (view === viewStates.PLAYLIST) {
+      playlistButton().querySelector("text").style.fill = "#f06a6a"
+      releasesButton().querySelector("text").style.fill = "white"
+      RELEASE_BOX.style.visibility = "hidden"
+    }
+    if (view === viewStates.RELEASES) {
+      playlistButton().querySelector("text").style.fill = "white"
+      releasesButton().querySelector("text").style.fill = "#f06a6a"
+      RELEASE_BOX.style.visibility = "visible"
+    }
+  }, [view])
+
+  useEffect(() => {
+    getPlaylistTracks(props.data.jsonFiles.curated_playlist).then(tracks =>
+      setTracks(tracks)
+    )
+  }, [])
+
   if (typeof window === "undefined") return <div></div>
   const isDesk = window.innerWidth > 768
-  const elu = isDesk ? require("./elu_desk.svg") : require("./elu.svg")
-
-  const buttonCreator = (id, index) => {
-    const element = document.querySelector(`#${id}`)
-    element.setAttribute("class", "button")
-    element.setAttribute("role", "button")
-    element.setAttribute("aria-label", `Go to ${id}`)
-    element.setAttribute("tabindex", `${index}`)
-    const clickEvent = () =>
-      (window.location.href = createLink(id, props.data.jsonFiles[id]))
-    element.onclick = clickEvent
-    element.onkeydown = e => {
-      if (e.key === "Enter") clickEvent()
-    }
-  }
-  const setupButtons = () => {
-    buttonCreator("soundcloud", 1)
-    buttonCreator("spotify", 2)
-    buttonCreator("instagram", 3)
-    buttonCreator("bandcamp", 4)
-
-    const profileImage = document
-      .querySelector("#PROFILE")
-      .querySelector("image")
-    profileImage.setAttribute("xlink:href", props.data.cloudinaryMedia.url)
-
-    const textEl = document.querySelector("#NAME")
-    const tspans = textEl.getElementsByTagName("tspan")
-    const artistName = props.data.jsonFiles.name
-    if (isDesk) {
-      textEl.innerHTML = props.data.jsonFiles.name
-    } else {
-      const templateString = artistName
-        .split(" ")
-        .map((word, i) => {
-          if (i === 0) {
-            return word
-          } else {
-            console.log(i)
-            const t = tspans[i - 1].cloneNode(false)
-            t.innerHTML = word
-            return t.outerHTML
-          }
-        })
-        .join("")
-      textEl.innerHTML = templateString
-    }
-
-    const client_id = "68ca93c0637a090be108eb8c8f3f8729"
-    if (!window.SC) return
-    const SC = window.SC
-    SC.initialize({
-      client_id,
-    })
-
-    SC.stream("/tracks/861776977").then(function (player) {
-      const listenButton = document.querySelector("#listen")
-      listenButton.setAttribute("class", "button")
-      listenButton.onclick = () => player.play()
-    })
-  }
+  console.log(props.data)
   return (
     <Layout>
-      <SEO title="Home" />
-      <Spotify />
-      <SVG src={elu} onLoad={setupButtons} />
+      <SEO title={props.data.jsonFiles.name} />
+      <Top
+        profileImgUrl={props.data.profile.url}
+        isDesk={isDesk}
+        data={props.data.jsonFiles}
+        artistName={props.data.jsonFiles.name}
+        setView={setView}
+        viewStates={viewStates}
+      />
+      <Mid svg={props.data.mid.url} />
+      {view === viewStates.PLAYLIST && (
+        <Playlist
+          tracks={tracks}
+          playlistUri={props.data.jsonFiles.curated_playlist}
+        />
+      )}
+      <Player />
     </Layout>
   )
 }
