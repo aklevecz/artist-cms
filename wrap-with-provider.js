@@ -77,13 +77,17 @@ const Provider = ({ children }) => {
       setScPlayer(player)
       player.play()
       setPlayerType("soundcloud")
-      // BAD BAD BAD BAD BAD BAD BAD BAD
+      let playStarted = false
       const checkPlaying = () => {
-        if (player.isActuallyPlaying()) setIsPlaying(true)
-        if (!player.isActuallyPlaying()) return setIsPlaying(false)
+        if (player.isActuallyPlaying()) {
+          playStarted = true
+          setIsPlaying(true)
+        }
+        if (!player.isActuallyPlaying() && playStarted)
+          return setIsPlaying(false)
         setTimeout(checkPlaying, 1000)
       }
-      setTimeout(() => checkPlaying(), 2000)
+      checkPlaying()
     })
   }
 
