@@ -11,7 +11,12 @@ import { releasesButton, playlistButton } from "./selectors"
 import Player from "../components/player"
 import { playerContext } from "../../wrap-with-provider"
 export const query = graphql`
-  query($regexName: String!, $profileUrl: String!, $midUrl: String!) {
+  query(
+    $regexName: String!
+    $profileUrl: String!
+    $midUrl: String!
+    $midUrlDesk: String!
+  ) {
     jsonFiles(name: { regex: $regexName }) {
       name
       spotify
@@ -24,6 +29,9 @@ export const query = graphql`
       url
     }
     mid: cloudinaryMedia(public_id: { eq: $midUrl }) {
+      url
+    }
+    midDesk: cloudinaryMedia(public_id: { eq: $midUrlDesk }) {
       url
     }
   }
@@ -60,7 +68,6 @@ const Artist = props => {
     getPlaylistTracks(props.data.jsonFiles.curated_playlist)
       .then(tracks => {
         setTracks(tracks)
-        console.log("jointex")
         context.setSpotifyAuth(true)
       })
       .catch(err => context.setSpotifyAuth(false))
@@ -88,6 +95,7 @@ const Artist = props => {
   }, [])
 
   if (typeof window === "undefined") return <div></div>
+  console.log(props)
   return (
     <Layout>
       <SEO title={props.data.jsonFiles.name} />
@@ -99,7 +107,7 @@ const Artist = props => {
         setView={setView}
         viewStates={viewStates}
       />
-      <Mid svg={props.data.mid.url} />
+      <Mid mid={props.data.mid} midDesk={props.data.midDesk} />
       {view === viewStates.PLAYLIST && (
         <Playlist
           tracks={tracks}

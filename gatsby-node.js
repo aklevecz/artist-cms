@@ -26,6 +26,7 @@ exports.createPages = ({ graphql, actions }) => {
         context: {
           profileUrl: `Artists/${name}/profile`,
           midUrl: `Artists/${name}/MID`,
+          midUrlDesk: `Artists/${name}/MID_desk`,
           regexName: `/^${edges.node.name}$/i`,
         },
       })
