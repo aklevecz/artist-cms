@@ -29,8 +29,8 @@ const Layout = ({ children }) => {
     //   window.close()
     // }
     const code = window.location.search.split("?code=")[1]
-    console.log("freg")
-    const redirect_uri = "http://localhost:8000"
+    console.log("getting token...")
+    const redirect_uri = process.env.GATSBY_REDIRECT_URI
     fetch("https://accounts.spotify.com/api/token", {
       body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
         redirect_uri
@@ -41,8 +41,12 @@ const Layout = ({ children }) => {
       },
       method: "POST",
     })
-      .then(r => r.json())
+      .then(r => {
+        console.log(r)
+        return r.json()
+      })
       .then(data => {
+        console.log("setting token...")
         localStorage.setItem("refrashT", data.refresh_token)
         localStorage.setItem("arcsasT", data.access_token)
         //   window.close()
