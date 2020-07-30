@@ -14,7 +14,10 @@ const Mid = ({ svg }) => {
   const svgSrc =
     process.env.NODE_ENV === "development"
       ? require(`./MID${isDesk() ? "_desk" : ""}.svg`)
-      : svg.replace("/q_auto,f_auto", "").replace("http", "https")
+      : svg
+          .replace("/q_auto,f_auto", "")
+          .replace("http", "https")
+          .replace(".svg", "_desk.svg")
 
   return (
     <div id="mid-container">

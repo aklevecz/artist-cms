@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
     //   window.close()
     // }
     const code = window.location.search.split("?code=")[1]
-    console.log("getting token...")
+    if (!code) return
     const redirect_uri = process.env.GATSBY_REDIRECT_URI
     fetch("https://accounts.spotify.com/api/token", {
       body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
@@ -42,7 +42,7 @@ const Layout = ({ children }) => {
       method: "POST",
     })
       .then(r => {
-        console.log(r)
+        if (r.status !== 200) throw new Error("invalid token")
         return r.json()
       })
       .then(data => {
