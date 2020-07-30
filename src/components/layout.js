@@ -5,7 +5,7 @@
  * See: https://www.gatsbyjs.org/docs/use-static-query/
  */
 
-import React from "react"
+import React, { useEffect } from "react"
 import PropTypes from "prop-types"
 // import { useStaticQuery, graphql } from "gatsby"
 import "./layout.css"
@@ -20,6 +20,39 @@ const Layout = ({ children }) => {
   //     }
   //   }
   // `)
+  useEffect(() => {
+    // if (window && window.location.href.includes("token")) {
+    //   const token = getQueryParam("token")
+    //   const rToken = getQueryParam("r_token")
+    //   localStorage.setItem("token", token)
+    //   localStorage.setItem("rToken", rToken)
+    //   window.close()
+    // }
+    const code = window.location.search.split("?code=")[1]
+    console.log("freg")
+    const redirect_uri = "http://localhost:8000"
+    fetch("https://accounts.spotify.com/api/token", {
+      body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
+        redirect_uri
+      )}`,
+      headers: {
+        Authorization: "Basic " + process.env.GATSBY_BB,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
+    })
+      .then(r => r.json())
+      .then(data => {
+        localStorage.setItem("refrashT", data.refresh_token)
+        localStorage.setItem("arcsasT", data.access_token)
+        //   window.close()
+      })
+      .catch(error => {
+        console.log("error")
+        localStorage.setItem("error", error)
+        //   window.close()
+      })
+  }, [])
 
   return (
     <>

@@ -17,11 +17,11 @@ const Callback = () => {
     .then(data => {
       localStorage.setItem("refrashT", data.refresh_token)
       localStorage.setItem("arcsasT", data.access_token)
-      window.close()
+      //   window.close()
     })
     .catch(error => {
       localStorage.setItem("error", error)
-      window.close()
+      //   window.close()
     })
 
   return <div style={{ fontSize: 100, color: "white" }}>YAY</div>
