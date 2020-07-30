@@ -2,7 +2,7 @@ html,
 body {
   margin: 0;
   background: black;
-  overflow-x: hidden;
+  color: white;
 }
 @font-face {
   font-family: "Stolzl Display";
@@ -27,4 +27,26 @@ body {
 
 .button {
   cursor: pointer;
+}
+
+h1 {
+  font-family: Stolzl Display;
+  font-size: 80px;
+  text-align: center;
+}
+.link {
+  color: white;
+  font-size: 40px;
+  display: block;
+  text-align: center;
+  font-family: Stolzl Display;
+  text-decoration: none;
+  margin: 90px auto;
+  border: 3px solid white;
+  width: 330px;
+  padding: 19px;
+}
+
+.link:hover {
+  background: red;
 }

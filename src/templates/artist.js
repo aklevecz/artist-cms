@@ -10,6 +10,7 @@ import Mid from "./Mid"
 import { releasesButton, playlistButton } from "./selectors"
 import Player from "../components/player"
 import { playerContext } from "../../wrap-with-provider"
+
 export const query = graphql`
   query(
     $regexName: String!
@@ -75,6 +76,7 @@ const Artist = props => {
 
   useEffect(() => {
     getArtistPlaylist()
+    context.getDevices()
   }, [])
 
   useEffect(() => {
@@ -88,14 +90,13 @@ const Artist = props => {
       console.log("index storage event")
       if (event.key !== "arcsasT") return
       getArtistPlaylist()
+      context.getDevices()
     }
     if (window) window.addEventListener("storage", handlerEvent, false)
 
     return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
-
   if (typeof window === "undefined") return <div></div>
-  console.log(props)
   return (
     <Layout>
       <SEO title={props.data.jsonFiles.name} />

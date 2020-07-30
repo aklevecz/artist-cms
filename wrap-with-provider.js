@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import refreshToken from "./src/services/refresh-token"
 import startPlayingPlaylist from "./src/services/start-playing-playlist"
 import pausePlaylistTrack from "./src/services/pause-playlist-track"
+import getUserDevices from "./src/services/get-user-devices"
 
 export const playerContext = React.createContext()
 
@@ -11,7 +12,14 @@ const Provider = ({ children }) => {
   const [player, setPlayer] = useState()
   const [scPlayer, setScPlayer] = useState()
   const [isPlaying, setIsPlaying] = useState()
+  const [devices, setDevices] = useState()
   const [track, setTrack] = useState()
+
+  const getDevices = () => {
+    getUserDevices().then(d => {
+      setDevices(d.devices)
+    })
+  }
 
   const initSoundcloud = () => {
     const client_id = "68ca93c0637a090be108eb8c8f3f8729"
@@ -138,7 +146,9 @@ const Provider = ({ children }) => {
   return (
     <playerContext.Provider
       value={{
+        devices,
         getPlayerType,
+        getDevices,
         initPlayer,
         initSoundcloud,
         isPlaying,

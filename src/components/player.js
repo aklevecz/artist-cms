@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react"
 import SVG from "react-inlinesvg"
-import playerSvg from "../templates/player.svg"
 import "./player.scss"
 import { playerContext } from "../../wrap-with-provider"
+import { isDesk } from "../templates/artist"
 
 const pauseButton = () => document.querySelector("#pause-button")
 const playButton = () => document.querySelector("#play-button")
@@ -32,6 +32,11 @@ const Player = () => {
     pauseButton().style.visibility = "hidden"
     setLoaded(true)
   }
+
+  if (!window) return <div></div>
+  const playerSvg = isDesk()
+    ? require("../templates/player_desk.svg")
+    : require("../templates/player.svg")
   return (
     <div className="player">
       {playerType && <SVG src={playerSvg} onLoad={setup} />}

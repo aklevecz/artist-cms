@@ -10,16 +10,12 @@ const Mid = ({ mid, midDesk }) => {
     listenButton.setAttribute("class", "button")
     listenButton.onclick = () => context.initSoundcloud()
   }
-  //   const formattedName = artistName.split(" ").join("-").toLowerCase()
-  //   const filePath = `Artists/${formattedName}/MID${isDesk() ? "_desk" : ""}/svg`
-
   const remoteSvgFile = isDesk() ? midDesk : mid
 
   const svgSrc =
     process.env.NODE_ENV === "development"
       ? require(`./MID${isDesk() ? "_desk" : ""}.svg`)
       : remoteSvgFile.url.replace("/q_auto,f_auto", "").replace("http", "https")
-  console.log(svgSrc)
   return (
     <div id="mid-container">
       <SVG src={svgSrc} onLoad={setupMidButtons} />
