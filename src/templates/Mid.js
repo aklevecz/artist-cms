@@ -3,12 +3,12 @@ import SVG from "react-inlinesvg"
 import { playerContext } from "../../wrap-with-provider"
 import { isDesk } from "./artist"
 
-const Mid = ({ mid, midDesk }) => {
+const Mid = ({ mid, midDesk, releaseTrackId }) => {
   const context = useContext(playerContext)
   const setupMidButtons = () => {
     const listenButton = document.querySelector("#listen")
     listenButton.setAttribute("class", "button")
-    listenButton.onclick = () => context.initSoundcloud()
+    listenButton.onclick = () => context.initSoundcloud(releaseTrackId)
   }
   const remoteSvgFile = isDesk() ? midDesk : mid
 

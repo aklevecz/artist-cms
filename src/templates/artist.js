@@ -25,6 +25,7 @@ export const query = graphql`
       instagram
       bandcamp
       curated_playlist
+      soundcloud_release_trackId
     }
     profile: cloudinaryMedia(public_id: { eq: $profileUrl }) {
       url
@@ -108,7 +109,11 @@ const Artist = props => {
         setView={setView}
         viewStates={viewStates}
       />
-      <Mid mid={props.data.mid} midDesk={props.data.midDesk} />
+      <Mid
+        mid={props.data.mid}
+        midDesk={props.data.midDesk}
+        releaseTrackId={props.data.jsonFiles.soundcloud_release_trackId}
+      />
       {view === viewStates.PLAYLIST && (
         <Playlist
           tracks={tracks}

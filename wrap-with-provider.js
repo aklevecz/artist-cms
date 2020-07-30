@@ -64,7 +64,7 @@ const Provider = ({ children }) => {
     setChosenDevice(deviceId)
     localStorage.setItem("deviceId", deviceId)
   }
-  const initSoundcloud = () => {
+  const initSoundcloud = trackId => {
     pausePlaylistTrack()
     const client_id = "68ca93c0637a090be108eb8c8f3f8729"
     if (!window.SC) return
@@ -72,9 +72,8 @@ const Provider = ({ children }) => {
     SC.initialize({
       client_id,
     })
-    const track = "859877467"
-    const eluizeTrack = "861776977"
-    SC.stream(`/tracks/${track}`).then(function (player) {
+
+    SC.stream(`/tracks/${trackId}`).then(function (player) {
       setScPlayer(player)
       player.play()
       setPlayerType("soundcloud")
