@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useContext } from "react"
-import startPlayingPlaylist from "../services/start-playing-playlist"
 import { playerContext } from "../../wrap-with-provider"
 import "./playlist.scss"
 import SpotifyButton from "../templates/spotify-button"
+import Popup from "./popup"
 
 const Playlist = ({ tracks, playlistUri }) => {
   const [xy, setXY] = useState({ x: 0, y: 0 })
+  const [popup, showPopup] = useState()
   const context = useContext(playerContext)
+
   useEffect(() => {
     if (typeof window === "undefined") return <div></div>
     const { x, y } = document.querySelector("#body-box").getBoundingClientRect()
@@ -36,34 +38,56 @@ const Playlist = ({ tracks, playlistUri }) => {
         "width=500, height=400"
       )
   }
-  console.log(context.spotifyAuth)
+
+  const pickDevice = deviceId => {
+    context.pickDevice(deviceId)
+    showPopup(false)
+  }
   return (
-    <div
-      className="playlist-container"
-      style={{ color: "white", position: "absolute", top: xy.y, left: xy.x }}
-    >
+    <>
+      {popup && (
+        <Popup title="Pick one of your Spotify devices">
+          {context.devices.map(device => {
+            return (
+              <div
+                className="device"
+                key={device.id}
+                onClick={() => pickDevice(device.id)}
+              >
+                {device.name}
+              </div>
+            )
+          })}
+        </Popup>
+      )}
       <div
-        style={{ position: "absolute", width: 320, cursor: "pointer" }}
-        onClick={spotAuth}
+        className="playlist-container"
+        style={{ color: "white", position: "absolute", top: xy.y, left: xy.x }}
       >
-        {!context.spotifyAuth && <SpotifyButton />}
+        <div
+          style={{ position: "absolute", width: 320, cursor: "pointer" }}
+          onClick={spotAuth}
+        >
+          {!context.spotifyAuth && <SpotifyButton />}
+        </div>
+        {tracks &&
+          tracks.map(track => {
+            return (
+              <div
+                className="track"
+                onClick={() => {
+                  if (!context.chosenDevice) return showPopup(true)
+                  context.playSpotifyTrack(playlistUri, track.trackUri)
+                }}
+                key={track.trackUri}
+                id={track.trackUri.split(":")[2]}
+              >
+                {track.name}
+              </div>
+            )
+          })}
       </div>
-      {tracks &&
-        tracks.map(track => {
-          return (
-            <div
-              className="track"
-              onClick={() => {
-                context.playSpotifyTrack(playlistUri, track.trackUri)
-              }}
-              key={track.trackUri}
-              id={track.trackUri.split(":")[2]}
-            >
-              {track.name}
-            </div>
-          )
-        })}
-    </div>
+    </>
   )
 }
 

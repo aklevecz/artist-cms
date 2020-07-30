@@ -3,22 +3,63 @@ import refreshToken from "./src/services/refresh-token"
 import startPlayingPlaylist from "./src/services/start-playing-playlist"
 import pausePlaylistTrack from "./src/services/pause-playlist-track"
 import getUserDevices from "./src/services/get-user-devices"
+import getUserCurrentlyPlaying from "./src/services/get-user-currently-playing"
 
+const RAPTOR_REPO_NAME = "Raptor Repo Player"
 export const playerContext = React.createContext()
 
+const showActiveTrack = uri => {
+  try {
+    const cPlaying = document.querySelector(".playing")
+    if (cPlaying) {
+      cPlaying.classList.remove("playing")
+    }
+    const element = document.getElementById(uri)
+    element.classList.add("playing")
+  } catch (err) {
+    console.log("cant find this boy")
+  }
+}
 const Provider = ({ children }) => {
   const [spotifyAuth, setSpotifyAuth] = useState()
   const [playerType, setPlayerType] = useState()
   const [player, setPlayer] = useState()
   const [scPlayer, setScPlayer] = useState()
   const [isPlaying, setIsPlaying] = useState()
+  const [chosenDevice, setChosenDevice] = useState()
   const [devices, setDevices] = useState()
   const [track, setTrack] = useState()
+
+  useEffect(() => {
+    if (!devices) return
+    let interval
+    const raptorRepoDevice = devices.find(
+      device => device.name === RAPTOR_REPO_NAME
+    )
+    if (chosenDevice !== raptorRepoDevice.id) {
+      // I'm not sure where this set should actually be
+      setPlayerType("spotify")
+      const pollPlaying = () => {
+        getUserCurrentlyPlaying().then(track => {
+          showActiveTrack(track.item.id)
+          setIsPlaying(track.is_playing)
+        })
+      }
+      interval = setInterval(pollPlaying, 1000)
+    }
+
+    return () => clearInterval(interval)
+  }, [chosenDevice, isPlaying])
 
   const getDevices = () => {
     getUserDevices().then(d => {
       setDevices(d.devices)
     })
+  }
+
+  const pickDevice = deviceId => {
+    setChosenDevice(deviceId)
+    localStorage.setItem("deviceId", deviceId)
   }
 
   const initSoundcloud = () => {
@@ -30,14 +71,10 @@ const Provider = ({ children }) => {
     })
 
     SC.stream("/tracks/861776977").then(function (player) {
-      //   const listenButton = document.querySelector("#listen")
-      //   listenButton.setAttribute("class", "button")
       setScPlayer(player)
-      //   listenButton.onclick = () => {
       player.play()
       setIsPlaying(true)
       setPlayerType("soundcloud")
-      //   }
     })
   }
 
@@ -47,7 +84,7 @@ const Provider = ({ children }) => {
   }
 
   const playSpotifyTrack = (playlistUri, trackUri) => {
-    if (isPlaying && playerType !== "spotify") pauseSoundcloud()
+    if (isPlaying && playerType !== "spotify" && scPlayer) pauseSoundcloud()
     setPlayerType("spotify")
     startPlayingPlaylist(playlistUri, trackUri)
   }
@@ -71,7 +108,7 @@ const Provider = ({ children }) => {
 
   const initPlayer = () => {
     const player = new window.Spotify.Player({
-      name: "Raptor Repo Player",
+      name: RAPTOR_REPO_NAME,
       getOAuthToken: cb => {
         cb(localStorage.getItem("arcsasT"))
       },
@@ -80,10 +117,9 @@ const Provider = ({ children }) => {
     player.addListener("ready", ({ device_id }) => {
       console.log("Ready with Device ID", device_id)
       localStorage.setItem("deviceId", device_id)
-      //   context && context.setGroovePlayer(device_id)
-      //   getUserDevices().then(data => {
-      //     context.addSpotifyDevices(data.devices)
-      //   })
+      getDevices()
+      setChosenDevice(device_id)
+
       // Error handling
       player.addListener("initialization_error", ({ message }) => {
         console.error(message)
@@ -95,7 +131,7 @@ const Provider = ({ children }) => {
           console.log(newToken)
           localStorage.setItem("token", newToken.token)
           player = new window.Spotify.Player({
-            name: "Groove Devotion Player",
+            name: RAPTOR_REPO_NAME,
             getOAuthToken: cb => {
               cb(newToken.token)
             },
@@ -119,21 +155,10 @@ const Provider = ({ children }) => {
         if (!state) return
         const currentTrack = state.track_window.current_track
         const paused = state.paused
-        try {
-          const cPlaying = document.querySelector(".playing")
-          if (cPlaying) {
-            cPlaying.classList.remove("playing")
-          }
-          const element = document.getElementById(
-            currentTrack.uri.split(":")[2]
-          )
-          element.classList.add("playing")
-        } catch (err) {
-          console.log("cant find this boy")
-        }
+        showActiveTrack(currentTrack.uri.split(":")[2])
         setTrack(currentTrack)
         setIsPlaying(!paused)
-        console.log(currentTrack, paused)
+        console.log(currentTrack)
       })
 
       player.addListener("not_ready", ({ device_id }) => {
@@ -146,6 +171,7 @@ const Provider = ({ children }) => {
   return (
     <playerContext.Provider
       value={{
+        chosenDevice,
         devices,
         getPlayerType,
         getDevices,
@@ -155,6 +181,7 @@ const Provider = ({ children }) => {
         pausePlayback,
         pausePlaylistTrack,
         pauseSoundcloud,
+        pickDevice,
         player,
         playSpotifyTrack,
         playerType,

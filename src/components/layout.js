@@ -22,13 +22,11 @@ const Layout = ({ children }) => {
         return r.json()
       })
       .then(data => {
-        console.log("setting token...")
         localStorage.setItem("refrashT", data.refresh_token)
         localStorage.setItem("arcsasT", data.access_token)
         window.close()
       })
       .catch(error => {
-        console.log("error")
         localStorage.setItem("error", error)
         window.close()
       })
