@@ -31,7 +31,8 @@ const Provider = ({ children }) => {
   const [track, setTrack] = useState()
 
   useEffect(() => {
-    if (!devices) return
+    console.log(chosenDevice, isPlaying, playerType)
+    if (!devices || playerType === "soundcloud") return
     let interval
     const raptorRepoDevice = devices.find(
       device => device.name === RAPTOR_REPO_NAME
@@ -74,8 +75,9 @@ const Provider = ({ children }) => {
     SC.stream("/tracks/861776977").then(function (player) {
       setScPlayer(player)
       player.play()
-      setIsPlaying(true)
       setPlayerType("soundcloud")
+
+      setIsPlaying(true)
     })
   }
 
@@ -98,7 +100,6 @@ const Provider = ({ children }) => {
       setIsPlaying(true)
     }
   }
-  console.log(playerType)
   const pausePlayback = () => {
     if (playerType === "spotify") {
       pausePlaylistTrack()
