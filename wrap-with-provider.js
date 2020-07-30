@@ -38,11 +38,12 @@ const Provider = ({ children }) => {
     )
     if (!raptorRepoDevice || chosenDevice !== raptorRepoDevice.id) {
       // I'm not sure where this set should actually be
-      setPlayerType("spotify")
+      //   setPlayerType("spotify")
       const pollPlaying = () => {
         getUserCurrentlyPlaying().then(track => {
           showActiveTrack(track.item.id)
           setIsPlaying(track.is_playing)
+          console.log("polling")
         })
       }
       interval = setInterval(pollPlaying, 1000)
@@ -97,6 +98,7 @@ const Provider = ({ children }) => {
       setIsPlaying(true)
     }
   }
+  console.log(playerType)
   const pausePlayback = () => {
     if (playerType === "spotify") {
       pausePlaylistTrack()
