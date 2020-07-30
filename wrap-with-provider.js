@@ -53,7 +53,7 @@ const Provider = ({ children }) => {
       clearInterval(interval)
       console.log("clear")
     }
-  }, [chosenDevice])
+  }, [isPlaying, chosenDevice])
 
   const getDevices = () => {
     getUserDevices().then(d => {
@@ -88,12 +88,13 @@ const Provider = ({ children }) => {
   }
 
   const pauseSoundcloud = () => {
+    console.log("pausing soundcloud")
     scPlayer.pause()
     setIsPlaying(false)
   }
 
   const playSpotifyTrack = (playlistUri, trackUri) => {
-    if (isPlaying && playerType !== "spotify" && scPlayer) pauseSoundcloud()
+    if (isPlaying && scPlayer) pauseSoundcloud()
     setPlayerType("spotify")
     startPlayingPlaylist(playlistUri, trackUri)
   }
