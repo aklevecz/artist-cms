@@ -32,9 +32,7 @@ const getPlaylistTracks = async function (uri) {
         return { name: trackName, artists, trackUri }
       })
     })
-    .catch(error => {
-      handleErrors(error, () => getPlaylistTracks(uri))
-    })
+
   return tracks
 }
 

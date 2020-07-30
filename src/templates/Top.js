@@ -52,6 +52,8 @@ const Top = ({
       .querySelector("image")
     profileImage.setAttribute("xlink:href", profileImgUrl)
 
+    playlistButton().setAttribute("class", "button")
+    releasesButton().setAttribute("class", "button")
     playlistButton().onclick = () => setView(viewStates.PLAYLIST)
     releasesButton().onclick = () => setView(viewStates.RELEASES)
 
@@ -77,9 +79,10 @@ const Top = ({
     }
   }
 
+  const svgSrc = isDesk() ? require("./TOP_desk.svg") : require("./TOP.svg")
   return (
     <div>
-      <SVG src={TopSVG} onLoad={setupButtons} />
+      <SVG src={svgSrc} onLoad={setupButtons} />
     </div>
   )
 }

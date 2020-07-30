@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { graphql } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -9,6 +9,7 @@ import Top from "./Top"
 import Mid from "./Mid"
 import { releasesButton, playlistButton } from "./selectors"
 import Player from "../components/player"
+import { playerContext } from "../../wrap-with-provider"
 export const query = graphql`
   query($regexName: String!, $profileUrl: String!, $midUrl: String!) {
     jsonFiles(name: { regex: $regexName }) {
@@ -33,10 +34,13 @@ const viewStates = {
   PLAYLIST: "playlist",
   ABOUT: "about",
 }
+export const isDesk = () => window.innerWidth > 768
 
 const Artist = props => {
   const [tracks, setTracks] = useState()
   const [view, setView] = useState(viewStates.RELEASES)
+  const context = useContext(playerContext)
+
   useEffect(() => {
     const RELEASE_BOX = document.querySelector("#RELEASES")
     if (!RELEASE_BOX) return
@@ -52,15 +56,38 @@ const Artist = props => {
     }
   }, [view])
 
+  const getArtistPlaylist = () => {
+    getPlaylistTracks(props.data.jsonFiles.curated_playlist)
+      .then(tracks => {
+        setTracks(tracks)
+        console.log("jointex")
+        context.setSpotifyAuth(true)
+      })
+      .catch(err => context.setSpotifyAuth(false))
+  }
+
   useEffect(() => {
-    getPlaylistTracks(props.data.jsonFiles.curated_playlist).then(tracks =>
-      setTracks(tracks)
-    )
+    getArtistPlaylist()
+  }, [])
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("arcsasT")
+    if (currentToken) {
+      console.log("check the token")
+      // getUser(currentToken).then(data => setUser(data.display_name))
+    }
+
+    const handlerEvent = event => {
+      console.log("index storage event")
+      if (event.key !== "arcsasT") return
+      getArtistPlaylist()
+    }
+    if (window) window.addEventListener("storage", handlerEvent, false)
+
+    return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
 
   if (typeof window === "undefined") return <div></div>
-  const isDesk = window.innerWidth > 768
-  console.log(props.data)
   return (
     <Layout>
       <SEO title={props.data.jsonFiles.name} />

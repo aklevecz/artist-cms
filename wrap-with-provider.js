@@ -6,6 +6,7 @@ import pausePlaylistTrack from "./src/services/pause-playlist-track"
 export const playerContext = React.createContext()
 
 const Provider = ({ children }) => {
+  const [spotifyAuth, setSpotifyAuth] = useState()
   const [playerType, setPlayerType] = useState()
   const [player, setPlayer] = useState()
   const [scPlayer, setScPlayer] = useState()
@@ -149,6 +150,8 @@ const Provider = ({ children }) => {
         playerType,
         resumePlayback,
         setPlayerType,
+        setSpotifyAuth,
+        spotifyAuth,
       }}
     >
       {children}
