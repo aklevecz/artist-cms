@@ -16,7 +16,7 @@ const Mid = ({ mid, midDesk }) => {
   const remoteSvgFile = isDesk() ? midDesk : mid
 
   const svgSrc =
-    process.env.NODE_ENV !== "development"
+    process.env.NODE_ENV === "development"
       ? require(`./MID${isDesk() ? "_desk" : ""}.svg`)
       : remoteSvgFile.url.replace("/q_auto,f_auto", "").replace("http", "https")
   console.log(svgSrc)
