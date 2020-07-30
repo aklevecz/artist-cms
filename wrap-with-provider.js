@@ -53,7 +53,7 @@ const Provider = ({ children }) => {
       clearInterval(interval)
       console.log("clear")
     }
-  }, [chosenDevice, isPlaying])
+  }, [chosenDevice])
 
   const getDevices = () => {
     getUserDevices().then(d => {
