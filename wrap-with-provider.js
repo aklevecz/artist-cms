@@ -42,7 +42,7 @@ const Provider = ({ children }) => {
       const pollPlaying = () => {
         getUserCurrentlyPlaying().then(track => {
           showActiveTrack(track.item.id)
-          setIsPlaying(track.is_playing)
+          playerType === "spotify" && setIsPlaying(track.is_playing)
           console.log("polling")
         })
       }
@@ -60,26 +60,31 @@ const Provider = ({ children }) => {
       setDevices(d.devices)
     })
   }
-
   const pickDevice = deviceId => {
     setChosenDevice(deviceId)
     localStorage.setItem("deviceId", deviceId)
   }
-
   const initSoundcloud = () => {
+    pausePlaylistTrack()
     const client_id = "68ca93c0637a090be108eb8c8f3f8729"
     if (!window.SC) return
     const SC = window.SC
     SC.initialize({
       client_id,
     })
-
-    SC.stream("/tracks/861776977").then(function (player) {
+    const track = "859877467"
+    const eluizeTrack = "861776977"
+    SC.stream(`/tracks/${track}`).then(function (player) {
       setScPlayer(player)
       player.play()
       setPlayerType("soundcloud")
-
-      setIsPlaying(true)
+      // BAD BAD BAD BAD BAD BAD BAD BAD
+      const checkPlaying = () => {
+        if (player.isActuallyPlaying()) setIsPlaying(true)
+        if (!player.isActuallyPlaying()) return setIsPlaying(false)
+        setTimeout(checkPlaying, 1000)
+      }
+      setTimeout(() => checkPlaying(), 1000)
     })
   }
 
@@ -123,7 +128,7 @@ const Provider = ({ children }) => {
       console.log("Ready with Device ID", device_id)
       localStorage.setItem("deviceId", device_id)
       getDevices()
-      setChosenDevice(device_id)
+      //   setChosenDevice(device_id)
 
       // Error handling
       player.addListener("initialization_error", ({ message }) => {

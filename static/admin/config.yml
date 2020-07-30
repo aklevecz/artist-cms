@@ -31,3 +31,8 @@ collections:
           name: "curated_playlist",
           widget: "string",
         }
+      - {
+          label: "Soundcloud Release TrackId",
+          name: "soundcloud_release_trackId",
+          widget: "string",
+        }

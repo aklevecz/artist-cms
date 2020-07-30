@@ -1,6 +1,5 @@
 import React from "react"
 import SVG from "react-inlinesvg"
-import TopSVG from "./TOP.svg"
 import { playlistButton, releasesButton } from "./selectors"
 
 const createLink = (site, tag) => {
