@@ -36,7 +36,7 @@ const Provider = ({ children }) => {
     const raptorRepoDevice = devices.find(
       device => device.name === RAPTOR_REPO_NAME
     )
-    if (chosenDevice !== raptorRepoDevice.id) {
+    if (chosenDevice !== raptorRepoDevice.id || !raptorRepoDevice) {
       // I'm not sure where this set should actually be
       setPlayerType("spotify")
       const pollPlaying = () => {
