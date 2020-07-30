@@ -83,7 +83,7 @@ const Provider = ({ children }) => {
         if (!player.isActuallyPlaying()) return setIsPlaying(false)
         setTimeout(checkPlaying, 1000)
       }
-      setTimeout(() => checkPlaying(), 1000)
+      setTimeout(() => checkPlaying(), 2000)
     })
   }
 
