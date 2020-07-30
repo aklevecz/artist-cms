@@ -40,6 +40,7 @@ const Playlist = ({ tracks, playlistUri }) => {
   }
 
   const pickDevice = deviceId => {
+    context.playerType("spotify")
     context.pickDevice(deviceId)
     showPopup(false)
   }

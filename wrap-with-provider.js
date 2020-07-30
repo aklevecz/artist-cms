@@ -31,7 +31,6 @@ const Provider = ({ children }) => {
   const [track, setTrack] = useState()
 
   useEffect(() => {
-    console.log(chosenDevice, isPlaying, playerType)
     if (!devices || playerType === "soundcloud") return
     let interval
     const raptorRepoDevice = devices.find(
@@ -50,7 +49,10 @@ const Provider = ({ children }) => {
       interval = setInterval(pollPlaying, 1000)
     }
 
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      console.log("clear")
+    }
   }, [chosenDevice, isPlaying])
 
   const getDevices = () => {
