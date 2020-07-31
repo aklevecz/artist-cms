@@ -63,34 +63,54 @@ const Provider = ({ children }) => {
   const pickDevice = deviceId => {
     setChosenDevice(deviceId)
     localStorage.setItem("deviceId", deviceId)
+    playSpotifyTrack()
   }
   const initSoundcloud = trackId => {
-    pausePlaylistTrack()
+    // pausePlaylistTrack()
     const client_id = "68ca93c0637a090be108eb8c8f3f8729"
     if (!window.SC) return
     const SC = window.SC
     SC.initialize({
       client_id,
     })
-
     SC.stream(`/tracks/${trackId}`).then(function (player) {
+      console.log(player)
       setScPlayer(player)
-      player.play()
-      setPlayerType("soundcloud")
-      let playStarted = false
-      const checkPlaying = () => {
-        if (player.isActuallyPlaying()) {
-          playStarted = true
-          setIsPlaying(true)
-        }
-        if (!player.isActuallyPlaying() && playStarted)
-          return setIsPlaying(false)
-        setTimeout(checkPlaying, 1000)
-      }
-      checkPlaying()
+      //   return
+      //   player.play()
+      //   setPlayerType("soundcloud")
+      //   let playStarted = false
+      //   const checkPlaying = () => {
+      //     if (player.isActuallyPlaying()) {
+      //       playStarted = true
+      //       setIsPlaying(true)
+      //     }
+      //     if (!player.isActuallyPlaying() && playStarted)
+      //       return setIsPlaying(false)
+      //     setTimeout(checkPlaying, 1000)
+      //   }
+      //   checkPlaying()
     })
   }
+  const playSoundcloud = async () => {
+    console.log(scPlayer)
+    await pausePlaylistTrack()
+    setPlayerType("soundcloud")
+    scPlayer.play()
+    setIsPlaying(true)
+  }
 
+  useEffect(() => {
+    let interval
+    if (playerType === "soundcloud") {
+      interval = setInterval(() => {
+        setIsPlaying(scPlayer.isActuallyPlaying())
+      }, 500)
+    }
+    return () => {
+      clearInterval(interval)
+    }
+  }, [playerType])
   const pauseSoundcloud = () => {
     console.log("pausing soundcloud")
     scPlayer.pause()
@@ -181,13 +201,11 @@ const Provider = ({ children }) => {
       setPlayer(player)
     })
   }
-  const getPlayerType = () => playerType
   return (
     <playerContext.Provider
       value={{
         chosenDevice,
         devices,
-        getPlayerType,
         getDevices,
         initPlayer,
         initSoundcloud,
@@ -197,6 +215,7 @@ const Provider = ({ children }) => {
         pauseSoundcloud,
         pickDevice,
         player,
+        playSoundcloud,
         playSpotifyTrack,
         playerType,
         resumePlayback,

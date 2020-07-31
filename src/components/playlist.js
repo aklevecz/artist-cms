@@ -7,6 +7,7 @@ import Popup from "./popup"
 const Playlist = ({ tracks, playlistUri }) => {
   const [xy, setXY] = useState({ x: 0, y: 0 })
   const [popup, showPopup] = useState()
+  const [queuedTrack, setQueuedTrack] = useState()
   const context = useContext(playerContext)
 
   useEffect(() => {
@@ -38,10 +39,10 @@ const Playlist = ({ tracks, playlistUri }) => {
         "width=500, height=400"
       )
   }
-
   const pickDevice = deviceId => {
     context.setPlayerType("spotify")
     context.pickDevice(deviceId)
+    context.playSpotifyTrack(playlistUri, queuedTrack)
     showPopup(false)
   }
   return (
@@ -77,8 +78,12 @@ const Playlist = ({ tracks, playlistUri }) => {
               <div
                 className="track"
                 onClick={() => {
-                  if (!context.chosenDevice) return showPopup(true)
-                  context.playSpotifyTrack(playlistUri, track.trackUri)
+                  if (!context.chosenDevice) {
+                    showPopup(true)
+                    setQueuedTrack(track.trackUri)
+                  } else {
+                    context.playSpotifyTrack(playlistUri, track.trackUri)
+                  }
                 }}
                 key={track.trackUri}
                 id={track.trackUri.split(":")[2]}

@@ -1,14 +1,21 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import SVG from "react-inlinesvg"
 import { playerContext } from "../../wrap-with-provider"
 import { isDesk } from "./artist"
 
-const Mid = ({ mid, midDesk, releaseTrackId }) => {
+const Mid = ({ mid, midDesk }) => {
   const context = useContext(playerContext)
+
+  // redundant
+  useEffect(() => {
+    const listenButton = document.querySelector("#listen")
+    if (!listenButton) return
+    listenButton.onclick = () => context.playSoundcloud()
+  }, [context.playSoundcloud])
   const setupMidButtons = () => {
     const listenButton = document.querySelector("#listen")
     listenButton.setAttribute("class", "button")
-    listenButton.onclick = () => context.initSoundcloud(releaseTrackId)
+    listenButton.onclick = () => context.playSoundcloud()
   }
   const remoteSvgFile = isDesk() ? midDesk : mid
 

@@ -78,6 +78,7 @@ const Artist = props => {
   useEffect(() => {
     getArtistPlaylist()
     context.getDevices()
+    context.initSoundcloud(props.data.jsonFiles.soundcloud_release_trackId)
   }, [])
 
   useEffect(() => {
