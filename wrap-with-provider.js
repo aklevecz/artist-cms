@@ -92,9 +92,9 @@ const Provider = ({ children }) => {
       //   checkPlaying()
     })
   }
-  const playSoundcloud = async () => {
+  const playSoundcloud = () => {
     console.log(scPlayer)
-    await pausePlaylistTrack()
+    pausePlaylistTrack()
     setPlayerType("soundcloud")
     scPlayer.play()
     setIsPlaying(true)
