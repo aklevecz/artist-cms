@@ -50,3 +50,7 @@ h1 {
 .link:hover {
   background: red;
 }
+
+button {
+  cursor: pointer;
+}

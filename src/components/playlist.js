@@ -3,6 +3,7 @@ import { playerContext } from "../../wrap-with-provider"
 import "./playlist.scss"
 import SpotifyButton from "../templates/spotify-button"
 import Popup from "./popup"
+import SignInAndPickDevice from "./signin-and-pick-device"
 
 const Playlist = ({ tracks, playlistUri }) => {
   const [xy, setXY] = useState({ x: 0, y: 0 })
@@ -39,39 +40,26 @@ const Playlist = ({ tracks, playlistUri }) => {
         "width=500, height=400"
       )
   }
-  const pickDevice = deviceId => {
-    context.setPlayerType("spotify")
-    context.pickDevice(deviceId)
-    context.playSpotifyTrack(playlistUri, queuedTrack)
-    showPopup(false)
-  }
+
   return (
     <>
       {popup && (
-        <Popup title="Pick one of your Spotify devices">
-          {context.devices.map(device => {
-            return (
-              <div
-                className="device"
-                key={device.id}
-                onClick={() => pickDevice(device.id)}
-              >
-                {device.name}
-              </div>
-            )
-          })}
-        </Popup>
+        <SignInAndPickDevice
+          showPopup={showPopup}
+          playlistUri={playlistUri}
+          queuedTrack={queuedTrack}
+        />
       )}
       <div
         className="playlist-container"
         style={{ color: "white", position: "absolute", top: xy.y, left: xy.x }}
       >
-        <div
+        {/* <div
           style={{ position: "absolute", width: 320, cursor: "pointer" }}
           onClick={spotAuth}
         >
           {!context.spotifyAuth && <SpotifyButton />}
-        </div>
+        </div> */}
         {tracks &&
           tracks.map(track => {
             return (

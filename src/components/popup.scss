@@ -5,9 +5,10 @@
   top: 50%;
   left: 50%;
   background: white;
-  padding: 1rem;
+  padding: 1.3rem;
   font-size: 1.5rem;
   width: 50%;
+  min-height: 100px;
   z-index: 9999;
 
   @media screen and (max-width: 768px) {
@@ -27,4 +28,13 @@
   &:hover {
     color: lime;
   }
+}
+
+button {
+  background: white;
+  border: 3px solid black;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  width: 28%;
 }

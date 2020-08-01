@@ -70,13 +70,15 @@ const Artist = props => {
     getPlaylistTracks(props.data.jsonFiles.curated_playlist)
       .then(tracks => {
         setTracks(tracks)
-        context.setSpotifyAuth(true)
+        // context.setSpotifyAuth(true)
       })
-      .catch(err => context.setSpotifyAuth(false))
+      .catch(err => {
+        // context.setSpotifyAuth(false)
+      })
   }
 
   useEffect(() => {
-    getArtistPlaylist()
+    context.getAppToken().then(getArtistPlaylist)
     context.getDevices()
     context.initSoundcloud(props.data.jsonFiles.soundcloud_release_trackId)
   }, [])
@@ -91,7 +93,7 @@ const Artist = props => {
     const handlerEvent = event => {
       console.log("index storage event")
       if (event.key !== "arcsasT") return
-      getArtistPlaylist()
+      // getArtistPlaylist()
       context.getDevices()
     }
     if (window) window.addEventListener("storage", handlerEvent, false)
@@ -109,6 +111,7 @@ const Artist = props => {
         artistName={props.data.jsonFiles.name}
         setView={setView}
         viewStates={viewStates}
+        spotifyAuth={context.spotifyAuth}
       />
       <Mid
         mid={props.data.mid}

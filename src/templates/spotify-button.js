@@ -1,9 +1,8 @@
 import React from "react"
 
-const SpotifyButton = () => {
-  const stroke = "white"
+const SpotifyButton = ({ stroke = "black", scale = 1 }) => {
   return (
-    <svg viewBox="0 0 31 31.3">
+    <svg transform={`scale(${scale})`} viewBox="0 0 31 31.3">
       <path
         fillRule="evenodd"
         clipRule="evenodd"

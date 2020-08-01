@@ -21,6 +21,7 @@ const showActiveTrack = uri => {
   }
 }
 const Provider = ({ children }) => {
+  const [appToken, setAppToken] = useState()
   const [spotifyAuth, setSpotifyAuth] = useState()
   const [playerType, setPlayerType] = useState()
   const [player, setPlayer] = useState()
@@ -39,13 +40,23 @@ const Provider = ({ children }) => {
     if (!raptorRepoDevice || chosenDevice !== raptorRepoDevice.id) {
       // I'm not sure where this set should actually be
       //   setPlayerType("spotify")
+      let errorCount = 0
       const pollPlaying = () => {
-        getUserCurrentlyPlaying().then(track => {
-          showActiveTrack(track.item.id)
-          playerType === "spotify" && setIsPlaying(track.is_playing)
-          console.log("polling")
-        })
+        if (errorCount > 10) {
+          setChosenDevice(undefined)
+          return clearInterval(interval)
+        }
+        getUserCurrentlyPlaying()
+          .then(track => {
+            showActiveTrack(track.item.id)
+            playerType === "spotify" && setIsPlaying(track.is_playing)
+            console.log("polling")
+          })
+          .catch(err => {
+            errorCount++
+          })
       }
+
       interval = setInterval(pollPlaying, 1000)
     }
 
@@ -55,10 +66,33 @@ const Provider = ({ children }) => {
     }
   }, [isPlaying, chosenDevice])
 
-  const getDevices = () => {
-    getUserDevices().then(d => {
-      setDevices(d.devices)
+  const getAppToken = () => {
+    return fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${process.env.GATSBY_BB}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `${encodeURIComponent("grant_type")}=${encodeURIComponent(
+        "client_credentials"
+      )}`,
     })
+      .then(r => r.json())
+      .then(data => {
+        setAppToken(data.access_token)
+        localStorage.setItem("appToken", data.access_token)
+      })
+  }
+
+  const getDevices = () => {
+    getUserDevices()
+      .then(d => {
+        setDevices(d.devices)
+        setSpotifyAuth(true)
+      })
+      .catch(error => {
+        setSpotifyAuth(false)
+      })
   }
   const pickDevice = deviceId => {
     setChosenDevice(deviceId)
@@ -74,22 +108,7 @@ const Provider = ({ children }) => {
       client_id,
     })
     SC.stream(`/tracks/${trackId}`).then(function (player) {
-      console.log(player)
       setScPlayer(player)
-      //   return
-      //   player.play()
-      //   setPlayerType("soundcloud")
-      //   let playStarted = false
-      //   const checkPlaying = () => {
-      //     if (player.isActuallyPlaying()) {
-      //       playStarted = true
-      //       setIsPlaying(true)
-      //     }
-      //     if (!player.isActuallyPlaying() && playStarted)
-      //       return setIsPlaying(false)
-      //     setTimeout(checkPlaying, 1000)
-      //   }
-      //   checkPlaying()
     })
   }
   const playSoundcloud = () => {
@@ -210,6 +229,7 @@ const Provider = ({ children }) => {
         initPlayer,
         initSoundcloud,
         isPlaying,
+        getAppToken,
         pausePlayback,
         pausePlaylistTrack,
         pauseSoundcloud,

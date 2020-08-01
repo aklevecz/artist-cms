@@ -1,32 +1,44 @@
-import React from "react"
+import React, { useEffect, useState, useContext } from "react"
 import SVG from "react-inlinesvg"
-import { playlistButton, releasesButton } from "./selectors"
-
-const createLink = (site, tag) => {
-  switch (site) {
-    case "soundcloud":
-      return `https://soundcloud.com/${tag}`
-    case "spotify":
-      return `https://open.spotify.com/artist/${
-        tag.split("spotify:artist:")[1]
-      }`
-    case "instagram":
-      return `https://instagram.com/${tag}`
-    case "bandcamp":
-      return `${tag}`
-    default:
-      return ""
-  }
-}
+import {
+  playlistButton,
+  releasesButton,
+  dropNav,
+  dropDownButton,
+  dropUpButton,
+  logButton,
+} from "./selectors"
+import { isDesk } from "./artist"
+import { lerpTranslateY } from "./animations"
+import { createLink } from "./utils"
+import { playerContext } from "../../wrap-with-provider"
 
 const Top = ({
   artistName,
   data,
-  isDesk,
   profileImgUrl,
   setView,
+  spotifyAuth,
   viewStates,
 }) => {
+  const [loaded, setLoaded] = useState(false)
+  const context = useContext(playerContext)
+  useEffect(() => {
+    if (loaded) {
+      if (spotifyAuth) {
+        logButton().querySelector("text").innerHTML = "LOGOUT"
+        logButton().onclick = () => {
+          localStorage.removeItem("arcsasT")
+          localStorage.removeItem("refrashT")
+          context.setSpotifyAuth(false)
+        }
+      }
+      if (!spotifyAuth) {
+        logButton().querySelector("text").innerHTML = "LOGIN"
+        logButton().onclick = () => console.log("login")
+      }
+    }
+  }, [spotifyAuth, loaded])
   const buttonCreator = (id, index) => {
     const element = document.querySelector(`#${id}`)
     element.setAttribute("class", "button")
@@ -41,6 +53,12 @@ const Top = ({
   }
 
   const setupButtons = () => {
+    const dropNavHeight = dropNav().querySelector("rect").getAttribute("height")
+    dropNav().setAttribute("transform", `translate(0, -${dropNavHeight + 0.1})`)
+
+    dropDownButton().onclick = () => lerpTranslateY(dropNav(), -240, -4)
+    dropUpButton().onclick = () => lerpTranslateY(dropNav(), 4, -240)
+
     buttonCreator("soundcloud", 1)
     buttonCreator("spotify", 2)
     buttonCreator("instagram", 3)
@@ -57,8 +75,9 @@ const Top = ({
     releasesButton().onclick = () => setView(viewStates.RELEASES)
 
     const textEl = document.querySelector("#NAME")
+    textEl.style.stroke = "black"
     const tspans = textEl.getElementsByTagName("tspan")
-    if (isDesk) {
+    if (isDesk()) {
       textEl.innerHTML = artistName
     } else {
       const templateString = artistName
@@ -76,6 +95,7 @@ const Top = ({
         .join("")
       textEl.innerHTML = templateString
     }
+    setLoaded(true)
   }
 
   const svgSrc = isDesk() ? require("./TOP_desk.svg") : require("./TOP.svg")

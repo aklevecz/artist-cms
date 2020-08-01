@@ -10,7 +10,8 @@ const playlistTrackFetch = async (playlistId, accessToken) =>
     },
   })
 const getPlaylistTracks = async function (uri) {
-  const accessToken = localStorage.getItem("arcsasT")
+  //   const accessToken = localStorage.getItem("arcsasT")
+  const accessToken = localStorage.getItem("appToken")
   const playlistId = uri.split(":")[2]
   const tracks = await playlistTrackFetch(playlistId, accessToken)
     .then(async r => {

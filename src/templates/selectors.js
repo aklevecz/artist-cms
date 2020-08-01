@@ -1,2 +1,6 @@
 export const playlistButton = () => document.querySelector("#playlist-button")
 export const releasesButton = () => document.querySelector("#releases-button")
+export const dropNav = () => document.querySelector("#DROP_NAV")
+export const dropDownButton = () => document.querySelector("#dropdown-button")
+export const dropUpButton = () => document.querySelector("#dropup-button")
+export const logButton = () => document.querySelector("#log-button")
