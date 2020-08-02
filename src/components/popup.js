@@ -9,10 +9,12 @@ const Popup = ({ children, title }) => {
     popRef.current.style.marginTop = (height / 2) * -1 + "px"
   })
   return (
-    <div ref={popRef} className="popup">
-      <div className="popup-header">{title}</div>
-      {children}
-    </div>
+    <>
+      <div ref={popRef} className="popup">
+        <div className="popup-header">{title}</div>
+        {children}
+      </div>
+    </>
   )
 }
 

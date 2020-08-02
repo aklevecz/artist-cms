@@ -1,8 +1,10 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useContext } from "react"
 import PropTypes from "prop-types"
 import "./layout.css"
+import { playerContext } from "../../wrap-with-provider"
 
 const Layout = ({ children }) => {
+  const context = useContext(playerContext)
   useEffect(() => {
     const code = window.location.search.split("?code=")[1]
     if (!code) return
@@ -24,6 +26,7 @@ const Layout = ({ children }) => {
       .then(data => {
         localStorage.setItem("refrashT", data.refresh_token)
         localStorage.setItem("arcsasT", data.access_token)
+        context.initPlayer()
         window.close()
       })
       .catch(error => {

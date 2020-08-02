@@ -22,6 +22,7 @@ const showActiveTrack = uri => {
 }
 const Provider = ({ children }) => {
   const [appToken, setAppToken] = useState()
+  const [antiAuth, setAntiAuth] = useState(false)
   const [spotifyAuth, setSpotifyAuth] = useState()
   const [playerType, setPlayerType] = useState()
   const [player, setPlayer] = useState()
@@ -223,6 +224,7 @@ const Provider = ({ children }) => {
   return (
     <playerContext.Provider
       value={{
+        antiAuth,
         chosenDevice,
         devices,
         getDevices,
@@ -239,6 +241,8 @@ const Provider = ({ children }) => {
         playSpotifyTrack,
         playerType,
         resumePlayback,
+        setAntiAuth,
+        setChosenDevice,
         setPlayerType,
         setSpotifyAuth,
         spotifyAuth,

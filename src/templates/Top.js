@@ -12,6 +12,7 @@ import { isDesk } from "./artist"
 import { lerpTranslateY } from "./animations"
 import { createLink } from "./utils"
 import { playerContext } from "../../wrap-with-provider"
+import authSpotify from "../services/spotify-auth"
 
 const Top = ({
   artistName,
@@ -31,11 +32,13 @@ const Top = ({
           localStorage.removeItem("arcsasT")
           localStorage.removeItem("refrashT")
           context.setSpotifyAuth(false)
+          context.setChosenDevice("")
+          context.initPlayer()
         }
       }
       if (!spotifyAuth) {
         logButton().querySelector("text").innerHTML = "LOGIN"
-        logButton().onclick = () => console.log("login")
+        logButton().onclick = authSpotify
       }
     }
   }, [spotifyAuth, loaded])

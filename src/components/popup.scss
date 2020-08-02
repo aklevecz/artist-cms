@@ -38,3 +38,13 @@ button {
   font-weight: bold;
   width: 28%;
 }
+
+.popup-overlay {
+  background: red;
+  height: 130%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  z-index: 9999;
+  opacity: 0.3;
+}
