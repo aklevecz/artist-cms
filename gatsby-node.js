@@ -33,3 +33,8 @@ exports.createPages = ({ graphql, actions }) => {
     })
   })
 }
+exports.onCreateWebpackConfig = ({ actions }) => {
+  actions.setWebpackConfig({
+    externals: ["react-helmet"],
+  })
+}
