@@ -27,4 +27,4 @@ export const onRenderBody = ({ setPostBodyComponents }) => {
 //   )
 // }
 
-// export const wrapRootElement = wrapWithProvider
+export const wrapRootElement = wrapWithProvider

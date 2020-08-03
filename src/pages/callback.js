@@ -1,4 +1,6 @@
 import React from "react"
+import SEO from "../components/seo"
+import Layout from "../components/layout"
 const Callback = () => {
   if (typeof window === "undefined") return <div></div>
   const code = window.location.search.split("?code=")[1]
@@ -24,7 +26,11 @@ const Callback = () => {
       //   window.close()
     })
 
-  return <div style={{ fontSize: 100, color: "white" }}>YAY</div>
+  return (
+    <Layout>
+      <div style={{ fontSize: 100, color: "white" }}>YAY</div>
+    </Layout>
+  )
 }
 
 export default Callback

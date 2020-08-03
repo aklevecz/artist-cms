@@ -100,7 +100,12 @@ const Artist = props => {
 
     return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
-  if (typeof window === "undefined") return <div></div>
+  if (typeof window === "undefined")
+    return (
+      <div>
+        <SEO title={props.data.jsonFiles.name} image={props.data.profile.url} />
+      </div>
+    )
   return (
     <Layout>
       <SEO title={props.data.jsonFiles.name} image={props.data.profile.url} />
