@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { playerContext } from "../../wrap-with-provider"
 import Popup from "./popup"
 import spotifyAuth from "../services/spotify-auth"
@@ -21,6 +21,15 @@ const DevicePicker = ({ devices, pickDevice }) => (
 
 const SignInAndPickDevice = ({ playlistUri, showPopup, queuedTrack }) => {
   const context = useContext(playerContext)
+  console.log("YACK")
+  useEffect(() => {
+    console.log("what")
+    if (context.spotifyAuth) {
+      console.log(context.devices)
+      context.getDevices()
+    }
+  }, [])
+
   const pickDevice = deviceId => {
     context.setPlayerType("spotify")
     context.pickDevice(deviceId)
@@ -41,7 +50,7 @@ const SignInAndPickDevice = ({ playlistUri, showPopup, queuedTrack }) => {
   return (
     <>
       {/* This is awkward because if they are already signed in it is then denying Spotify*/}
-      <div onClick={denySpotify} class="popup-overlay"></div>
+      <div onClick={denySpotify} className="popup-overlay"></div>
       <Popup title={title}>
         {context.spotifyAuth && (
           <DevicePicker devices={context.devices} pickDevice={pickDevice} />

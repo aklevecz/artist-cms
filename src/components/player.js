@@ -8,9 +8,13 @@ const pauseButton = () => document.querySelector("#pause-button")
 const playButton = () => document.querySelector("#play-button")
 
 const Player = () => {
-  const { isPlaying, pausePlayback, playerType, resumePlayback } = useContext(
-    playerContext
-  )
+  const {
+    isPlaying,
+    pausePlayback,
+    playerType,
+    resumePlayback,
+    track,
+  } = useContext(playerContext)
   const [loaded, setLoaded] = useState(false)
   useEffect(() => {
     if (!loaded) return
@@ -37,8 +41,18 @@ const Player = () => {
   const playerSvg = isDesk()
     ? require("../templates/player_desk.svg")
     : require("../templates/player.svg")
+  const progress = track && track.progress_ms / track.item.duration_ms
+  console.log(track)
   return (
     <div className="player">
+      <div
+        style={{
+          position: "absolute",
+          height: 10,
+          background: "red",
+          width: progress && window.innerWidth * progress,
+        }}
+      ></div>
       {playerType && <SVG src={playerSvg} onLoad={setup} />}
     </div>
   )

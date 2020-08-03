@@ -36,31 +36,32 @@ const Provider = ({ children }) => {
   useEffect(() => {
     if (!devices || playerType === "soundcloud") return
     let interval
-    const raptorRepoDevice = devices.find(
-      device => device.name === RAPTOR_REPO_NAME
-    )
-    if (!raptorRepoDevice || chosenDevice !== raptorRepoDevice.id) {
-      // I'm not sure where this set should actually be
-      //   setPlayerType("spotify")
-      let errorCount = 0
-      const pollPlaying = () => {
-        if (errorCount > 10) {
-          setChosenDevice(undefined)
-          return clearInterval(interval)
-        }
-        getUserCurrentlyPlaying()
-          .then(track => {
-            showActiveTrack(track.item.id)
-            playerType === "spotify" && setIsPlaying(track.is_playing)
-            console.log("polling")
-          })
-          .catch(err => {
-            errorCount++
-          })
-      }
+    // const raptorRepoDevice = devices.find(
+    //   device => device.name === RAPTOR_REPO_NAME
+    // )
+    // if (!raptorRepoDevice || chosenDevice !== raptorRepoDevice.id) {
 
-      interval = setInterval(pollPlaying, 1000)
+    // I'm not sure where this set should actually be
+    //   setPlayerType("spotify")
+    let errorCount = 0
+    const pollPlaying = () => {
+      if (errorCount > 10) {
+        setChosenDevice(undefined)
+        return clearInterval(interval)
+      }
+      getUserCurrentlyPlaying()
+        .then(track => {
+          showActiveTrack(track.item.id)
+          playerType === "spotify" && setIsPlaying(track.is_playing)
+          setTrack(track)
+        })
+        .catch(err => {
+          errorCount++
+        })
     }
+
+    interval = setInterval(pollPlaying, 1000)
+    // }
 
     return () => {
       clearInterval(interval)
@@ -114,8 +115,9 @@ const Provider = ({ children }) => {
     })
   }
   const playSoundcloud = () => {
-    console.log(scPlayer)
-    pausePlaylistTrack()
+    if (isPlaying && playerType === "spotify") {
+      pausePlaylistTrack()
+    }
     setPlayerType("soundcloud")
     scPlayer.play()
     setIsPlaying(true)
@@ -124,8 +126,19 @@ const Provider = ({ children }) => {
   useEffect(() => {
     let interval
     if (playerType === "soundcloud") {
+      let loading = true
       interval = setInterval(() => {
-        setIsPlaying(scPlayer.isActuallyPlaying())
+        console.log(scPlayer)
+        if (scPlayer.isActuallyPlaying() && loading) {
+          loading = false
+        }
+        if (!loading) {
+          setTrack({
+            progress_ms: scPlayer.currentTime(),
+            item: { duration_ms: scPlayer.getDuration() },
+          })
+          setIsPlaying(scPlayer.isActuallyPlaying())
+        }
       }, 500)
     }
     return () => {
@@ -209,9 +222,10 @@ const Provider = ({ children }) => {
       player.addListener("player_state_changed", state => {
         if (!state) return
         const currentTrack = state.track_window.current_track
+        console.log(state)
         const paused = state.paused
         showActiveTrack(currentTrack.uri.split(":")[2])
-        setTrack(currentTrack)
+        // setTrack(currentTrack)
         setIsPlaying(!paused)
         console.log(currentTrack)
       })
@@ -247,6 +261,7 @@ const Provider = ({ children }) => {
         setPlayerType,
         setSpotifyAuth,
         spotifyAuth,
+        track,
       }}
     >
       {/* <SEO title="freg" /> */}
