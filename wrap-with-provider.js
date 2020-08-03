@@ -4,6 +4,7 @@ import startPlayingPlaylist from "./src/services/start-playing-playlist"
 import pausePlaylistTrack from "./src/services/pause-playlist-track"
 import getUserDevices from "./src/services/get-user-devices"
 import getUserCurrentlyPlaying from "./src/services/get-user-currently-playing"
+import SEO from "./src/components/seo"
 
 const RAPTOR_REPO_NAME = "Raptor Repo Player"
 export const playerContext = React.createContext()
@@ -248,6 +249,7 @@ const Provider = ({ children }) => {
         spotifyAuth,
       }}
     >
+      {/* <SEO title="freg" /> */}
       {children}
     </playerContext.Provider>
   )

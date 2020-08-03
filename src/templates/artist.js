@@ -103,7 +103,7 @@ const Artist = props => {
   if (typeof window === "undefined") return <div></div>
   return (
     <Layout>
-      <SEO title={props.data.jsonFiles.name} />
+      <SEO title={props.data.jsonFiles.name} image={props.data.profile.url} />
       <Top
         profileImgUrl={props.data.profile.url}
         isDesk={isDesk}
