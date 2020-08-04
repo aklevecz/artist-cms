@@ -4,6 +4,11 @@ body {
   background: black;
   color: white;
 }
+#portal {
+  position: sticky;
+  bottom: 0;
+}
+
 @font-face {
   font-family: "Stolzl Display";
   src: url("../fonts/Stolzl Display.otf") format("opentype");
