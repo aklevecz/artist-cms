@@ -9,7 +9,6 @@ export default async () => {
       return r.json()
     })
     .then(data => {
-      console.log(data)
       return data
     })
     .catch(err => {

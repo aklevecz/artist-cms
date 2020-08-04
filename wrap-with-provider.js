@@ -128,7 +128,6 @@ const Provider = ({ children }) => {
     if (playerType === "soundcloud") {
       let loading = true
       interval = setInterval(() => {
-        console.log(scPlayer)
         if (scPlayer.isActuallyPlaying() && loading) {
           loading = false
         }

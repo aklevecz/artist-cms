@@ -3,6 +3,7 @@ import SVG from "react-inlinesvg"
 import "./player.scss"
 import { playerContext } from "../../wrap-with-provider"
 import { isDesk } from "../templates/artist"
+import { createPortal } from "react-dom"
 
 const pauseButton = () => document.querySelector("#pause-button")
 const playButton = () => document.querySelector("#play-button")
@@ -43,7 +44,7 @@ const Player = () => {
     : require("../templates/player.svg")
   const progress = track && track.progress_ms / track.item.duration_ms
   console.log(track)
-  return (
+  return createPortal(
     <div className="player">
       <div
         style={{
@@ -54,7 +55,8 @@ const Player = () => {
         }}
       ></div>
       {playerType && <SVG src={playerSvg} onLoad={setup} />}
-    </div>
+    </div>,
+    document.getElementById("portal")
   )
 }
 

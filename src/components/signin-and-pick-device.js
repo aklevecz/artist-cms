@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react"
 import { playerContext } from "../../wrap-with-provider"
 import Popup from "./popup"
-import spotifyAuth from "../services/spotify-auth"
+import callSpotifyAuth from "../services/spotify-auth"
 
 const DevicePicker = ({ devices, pickDevice }) => (
   <div>
@@ -20,31 +20,39 @@ const DevicePicker = ({ devices, pickDevice }) => (
 )
 
 const SignInAndPickDevice = ({ playlistUri, showPopup, queuedTrack }) => {
-  const context = useContext(playerContext)
+  const {
+    devices,
+    getDevices,
+    pickDevice,
+    playSpotifyTrack,
+    setPlayerType,
+    setAntiAuth,
+    spotifyAuth,
+  } = useContext(playerContext)
   console.log("YACK")
   useEffect(() => {
     console.log("what")
-    if (context.spotifyAuth) {
-      console.log(context.devices)
-      context.getDevices()
+    if (spotifyAuth) {
+      console.log(devices)
+      getDevices()
     }
   }, [])
 
-  const pickDevice = deviceId => {
-    context.setPlayerType("spotify")
-    context.pickDevice(deviceId)
-    context.playSpotifyTrack(playlistUri, queuedTrack)
+  const selectDevice = deviceId => {
+    setPlayerType("spotify")
+    pickDevice(deviceId)
+    playSpotifyTrack(playlistUri, queuedTrack)
     showPopup(false)
   }
 
   const acceptSpotify = () => {
-    spotifyAuth()
+    callSpotifyAuth()
   }
   const denySpotify = () => {
     showPopup(false)
-    context.setAntiAuth(true)
+    setAntiAuth(true)
   }
-  const title = context.spotifyAuth
+  const title = spotifyAuth
     ? "Pick one of your Spotify devices"
     : "Login with Spotify?"
   return (
@@ -52,10 +60,10 @@ const SignInAndPickDevice = ({ playlistUri, showPopup, queuedTrack }) => {
       {/* This is awkward because if they are already signed in it is then denying Spotify*/}
       <div onClick={denySpotify} className="popup-overlay"></div>
       <Popup title={title}>
-        {context.spotifyAuth && (
-          <DevicePicker devices={context.devices} pickDevice={pickDevice} />
+        {spotifyAuth && (
+          <DevicePicker devices={devices} pickDevice={selectDevice} />
         )}
-        {!context.spotifyAuth && (
+        {!spotifyAuth && (
           <div style={{ color: "black" }}>
             <div
               style={{
