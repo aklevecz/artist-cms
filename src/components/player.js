@@ -4,6 +4,7 @@ import "./player.scss"
 import { playerContext } from "../../wrap-with-provider"
 import { isDesk } from "../templates/artist"
 import { createPortal } from "react-dom"
+import seekTrack from "../services/seek-track"
 
 const pauseButton = () => document.querySelector("#pause-button")
 const playButton = () => document.querySelector("#play-button")
@@ -38,6 +39,14 @@ const Player = () => {
     setLoaded(true)
   }
 
+  const seek = e => {
+    const x = e.touches ? e.touches[0].clientX : e.clientX
+    const width = e.target.getBoundingClientRect().width
+    const seekPointPercent = x / width
+    const seekPoint = Math.floor(track.item.duration_ms * seekPointPercent)
+    seekTrack(seekPoint)
+  }
+
   if (!window) return <div></div>
   const playerSvg = isDesk()
     ? require("../templates/player_desk.svg")
@@ -47,8 +56,20 @@ const Player = () => {
   return createPortal(
     <div className="player">
       <div
+        onClick={seek}
         style={{
           position: "absolute",
+          top: 0,
+          height: 10,
+          width: "100%",
+          background: "yellow",
+        }}
+      ></div>
+      <div
+        onClick={seek}
+        style={{
+          position: "absolute",
+          top: 0,
           height: 10,
           background: "red",
           width: progress && window.innerWidth * progress,
