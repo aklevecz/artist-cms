@@ -57,7 +57,10 @@ const Top = ({
 
   const setupButtons = () => {
     const dropNavHeight = dropNav().querySelector("rect").getAttribute("height")
-    dropNav().setAttribute("transform", `translate(0, -${dropNavHeight + 0.1})`)
+    dropNav().setAttribute(
+      "transform",
+      `translate(0, -${parseInt(dropNavHeight) + 0.1})`
+    )
 
     dropDownButton().onclick = () => lerpTranslateY(dropNav(), -240, -4)
     dropUpButton().onclick = () => lerpTranslateY(dropNav(), 4, -240)
