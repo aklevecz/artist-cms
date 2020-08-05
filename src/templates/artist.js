@@ -100,6 +100,7 @@ const Artist = props => {
 
     return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
+  console.log(props)
   if (typeof window === "undefined")
     return (
       <div>
