@@ -99,6 +99,7 @@ const Artist = props => {
 
   const getArtistsProfile = () => {
     if (image) return
+    if (!window) return
     console.log("calling profile")
     getArtist(props.data.jsonFiles.spotify.split(":")[2]).then(data => {
       setImage(data.images[0].url)
