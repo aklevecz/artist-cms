@@ -2,10 +2,8 @@ import React, { useContext, useEffect } from "react"
 import SVG from "react-inlinesvg"
 import { playerContext } from "../../wrap-with-provider"
 import { isDesk } from "./artist"
-
-import releaseSquare from "./release-square.svg"
-
-const Mid = ({ mid, midDesk, remoteReleaseSquare }) => {
+import { viewStates } from "./artist"
+const Mid = ({ mid, midDesk, remoteReleaseSquare, setView }) => {
   const context = useContext(playerContext)
 
   // redundant
@@ -15,17 +13,13 @@ const Mid = ({ mid, midDesk, remoteReleaseSquare }) => {
     listenButton.onclick = () => context.playSoundcloud()
   }, [context.playSoundcloud])
 
-  const setupMidButtons = () => {}
+  const checkView = () => {
+    if (!remoteReleaseSquare) setView(viewStates.PLAYLIST)
+  }
 
   const setupSquare = () => {
-    // const picture = document.querySelector("#RELEASES").innerHTML
-    // const g = document.createElement("g")
-    // g.innerHTML = picture
-    // const release = document.querySelector("#BODY_BOX")
-    // release.appendChild(g)
     const bbox = document.querySelector("#BODY_BOX")
     const release = document.querySelector("#RELEASES")
-    console.log(release, bbox)
     const { x, y, width, height } = bbox.getBoundingClientRect()
     release.setAttribute("width", width)
     release.style.position = "absolute"
@@ -35,20 +29,24 @@ const Mid = ({ mid, midDesk, remoteReleaseSquare }) => {
     listenButton.setAttribute("class", "button")
     listenButton.onclick = () => context.playSoundcloud()
   }
-  const remoteSvgFile = isDesk() ? midDesk : mid
-  console.log(remoteReleaseSquare)
-  const releaseSquare =
-    process.env.NODE_ENV === "development"
-      ? require(`./release-square.svg`)
-      : remoteReleaseSquare.url
-          .replace("/q_auto,f_auto", "")
-          .replace("http", "https")
+
+  let releaseSquare
+  if (remoteReleaseSquare) {
+    releaseSquare =
+      process.env.NODE_ENV === "development"
+        ? require(`./release-square.svg`)
+        : remoteReleaseSquare.url
+            .replace("/q_auto,f_auto", "")
+            .replace("http", "https")
+  } else {
+    releaseSquare = undefined
+  }
 
   const svgSrc = require(`./MID${isDesk() ? "_desk" : ""}.svg`)
   return (
     <div id="mid-container">
-      <SVG src={svgSrc} onLoad={setupMidButtons} />
-      <SVG src={releaseSquare} onLoad={setupSquare} />
+      <SVG src={svgSrc} onLoad={checkView} />
+      {releaseSquare && <SVG src={releaseSquare} onLoad={setupSquare} />}
     </div>
   )
 }

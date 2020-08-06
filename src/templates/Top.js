@@ -42,6 +42,7 @@ const Top = ({
       }
     }
   }, [spotifyAuth, loaded])
+
   const buttonCreator = (id, index) => {
     const element = document.querySelector(`#${id}`)
     element.setAttribute("class", "button")
@@ -73,7 +74,7 @@ const Top = ({
     const profileImage = document
       .querySelector("#PROFILE")
       .querySelector("image")
-    console.log(profileImage)
+
     profileImage.setAttribute("xlink:href", profileImgUrl)
 
     playlistButton().setAttribute("class", "button")

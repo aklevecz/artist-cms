@@ -7,9 +7,11 @@ import Playlist from "../components/playlist"
 import "./artist.scss"
 import Top from "./Top"
 import Mid from "./Mid"
-import { releasesButton, playlistButton } from "./selectors"
+import { releasesButton, playlistButton, RELEASE_BOX } from "./selectors"
 import Player from "../components/player"
 import { playerContext } from "../../wrap-with-provider"
+import getArtist from "../services/get-artist"
+import getArtistTopTracks from "../services/get-artist-top-tracks"
 
 export const query = graphql`
   query(
@@ -43,7 +45,7 @@ export const query = graphql`
   }
 `
 
-const viewStates = {
+export const viewStates = {
   RELEASES: "releases",
   PLAYLIST: "playlist",
   ABOUT: "about",
@@ -51,34 +53,57 @@ const viewStates = {
 export const isDesk = () => window.innerWidth > 768
 
 const Artist = props => {
+  const [image, setImage] = useState(
+    props.data.profile && props.data.profile.url
+  )
   const [tracks, setTracks] = useState()
   const [view, setView] = useState(viewStates.RELEASES)
   const context = useContext(playerContext)
 
+  const viewPlaylist = () => {
+    playlistButton().querySelector("text").style.fill = "#f06a6a"
+    releasesButton().querySelector("text").style.fill = "white"
+    RELEASE_BOX().style.visibility = "hidden"
+  }
   useEffect(() => {
-    const RELEASE_BOX = document.querySelector("#RELEASES")
-    if (!RELEASE_BOX) return
+    if (!RELEASE_BOX()) return
     if (view === viewStates.PLAYLIST) {
-      playlistButton().querySelector("text").style.fill = "#f06a6a"
-      releasesButton().querySelector("text").style.fill = "white"
-      RELEASE_BOX.style.visibility = "hidden"
+      alert("AY")
+      viewPlaylist()
     }
     if (view === viewStates.RELEASES) {
       playlistButton().querySelector("text").style.fill = "white"
       releasesButton().querySelector("text").style.fill = "#f06a6a"
-      RELEASE_BOX.style.visibility = "visible"
+      RELEASE_BOX().style.visibility = "visible"
     }
   }, [view])
 
   const getArtistPlaylist = () => {
-    getPlaylistTracks(props.data.jsonFiles.curated_playlist)
-      .then(tracks => {
-        setTracks(tracks)
-        // context.setSpotifyAuth(true)
-      })
-      .catch(err => {
-        // context.setSpotifyAuth(false)
-      })
+    if (props.data.jsonFiles.curated_playlist) {
+      getPlaylistTracks(props.data.jsonFiles.curated_playlist)
+        .then(tracks => {
+          setTracks(tracks)
+          // context.setSpotifyAuth(true)
+        })
+        .catch(err => {
+          // context.setSpotifyAuth(false)
+        })
+    } else {
+      getArtistTopTracks(props.data.jsonFiles.spotify.split(":")[2]).then(
+        tracks => {
+          console.log(tracks)
+          setTracks(tracks)
+        }
+      )
+    }
+  }
+
+  const getArtistsProfile = () => {
+    if (image) return
+    console.log("calling profile")
+    getArtist(props.data.jsonFiles.spotify.split(":")[2]).then(data => {
+      setImage(data.images[0].url)
+    })
   }
 
   useEffect(() => {
@@ -104,31 +129,39 @@ const Artist = props => {
 
     return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
-  console.log(props.data)
+
+  if (!image) {
+    getArtistsProfile()
+  }
   if (typeof window === "undefined")
     return (
       <div>
-        <SEO title={props.data.jsonFiles.name} image={props.data.profile.url} />
+        <SEO title={props.data.jsonFiles.name} image={image} />
       </div>
     )
   return (
     <Layout>
-      <SEO title={props.data.jsonFiles.name} image={props.data.profile.url} />
-      <Top
-        profileImgUrl={props.data.profile.url}
-        isDesk={isDesk}
-        data={props.data.jsonFiles}
-        artistName={props.data.jsonFiles.name}
-        setView={setView}
-        viewStates={viewStates}
-        spotifyAuth={context.spotifyAuth}
-      />
-      <Mid
-        mid={props.data.mid}
-        midDesk={props.data.midDesk}
-        releaseTrackId={props.data.jsonFiles.soundcloud_release_trackId}
-        remoteReleaseSquare={props.data.releaseSquare}
-      />
+      <SEO title={props.data.jsonFiles.name} image={image} />
+      {image && (
+        <Top
+          profileImgUrl={image}
+          isDesk={isDesk}
+          data={props.data.jsonFiles}
+          artistName={props.data.jsonFiles.name}
+          setView={setView}
+          viewStates={viewStates}
+          spotifyAuth={context.spotifyAuth}
+        />
+      )}
+      {image && (
+        <Mid
+          mid={props.data.mid}
+          midDesk={props.data.midDesk}
+          releaseTrackId={props.data.jsonFiles.soundcloud_release_trackId}
+          remoteReleaseSquare={props.data.releaseSquare}
+          setView={setView}
+        />
+      )}
       {view === viewStates.PLAYLIST && (
         <Playlist
           tracks={tracks}

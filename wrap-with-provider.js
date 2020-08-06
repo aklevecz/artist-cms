@@ -153,7 +153,11 @@ const Provider = ({ children }) => {
   const playSpotifyTrack = (playlistUri, trackUri) => {
     if (isPlaying && scPlayer) pauseSoundcloud()
     setPlayerType("spotify")
-    startPlayingPlaylist(playlistUri, trackUri)
+    if (playlistUri) {
+      startPlayingPlaylist(playlistUri, trackUri)
+    } else {
+      startPlayingPlaylist(undefined, undefined, undefined, trackUri)
+    }
   }
 
   const resumePlayback = () => {
