@@ -3,22 +3,39 @@ const fs = require("fs")
 
 const plraw = fs.readFileSync("all-artists.json")
 const pl = JSON.parse(plraw)
-
-pl.forEach(p => {
+const token =
+  "BQA-mQY9WlQRmVGvMB6wSfaUU5plBSQ4msmAX0yVL5TlyNFONvphms-q8nAz5g8t8PBHPp_vDeqyqGQgoG_2ePJ5C5Mah54EBXjUiHbtXcB427yRi_UobSufFGIlotyc-c8nX1ZAGB6enAi84gLgaYvLJu0HGjHZXKoSwFxnzdY381GmIZyHBpWfJiDppSY5WKouIICy7hW00F24LkwTSCn26qQZNnWRXyspbfjAiKDIFsZKRyn9CD4Ur0gKDZURQhbIyO7tmg"
+pl.forEach((p, i) => {
   const dir_name = p.name.toLowerCase().split(" ").join("-")
   const modelDir = "models/artist"
   const artistDir = `${modelDir}/${dir_name}`
+  const checkCurrent = fs.readFileSync(`${artistDir}/data.json`)
+  const checkCurrentJson = JSON.parse(checkCurrent)
+  if (checkCurrentJson.instagram) {
+    return
+  }
   try {
     fs.mkdirSync(artistDir)
   } catch (e) {
-    console.log(e)
+    e
   }
-  fs.writeFileSync(`${artistDir}/data.json`, JSON.stringify(p))
+  setTimeout(
+    () =>
+      fetch(`https://api.spotify.com/v1/artists/${p.spotify.split(":")[2]}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(r => r.json())
+        .then(data => {
+          p.spotify_image = data.images[0].url
+          fs.writeFileSync(`${artistDir}/data.json`, JSON.stringify(p))
+        }),
+    i * 1000
+  )
 })
 return
 // playlists = []
-const token =
-  "BQA70253A4QFOBJ2Cey8fqxYhNEnYlpYJlu_rCri6jRJO3I9nkjxgwTzvoJrvhQA08X7couR-MK6c0LcnSU9JC9BjeX4cUj8THqcJ6un6rtNglR-gzk209u4sUN97KNncrq48vH3xD42XSo6DxbLr8ASYnV_3EFmuMY_YYnAFfvGu8P12mzXdDakICaEkgh6bwXand8Cw7zFG8slOkOjcvJJTQgKANFyvv8g0vgdGJDE7D9MaZ-QAzTIWS-TbhLUaZOl51sv4A"
 // fetch(`https://api.spotify.com/v1/me/playlists?limit=50&offset=300`, {
 //   headers: {
 //     Authorization: `Bearer ${token}`,

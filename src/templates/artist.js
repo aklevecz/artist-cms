@@ -29,6 +29,7 @@ export const query = graphql`
       bandcamp
       curated_playlist
       soundcloud_release_trackId
+      spotify_image
     }
     profile: cloudinaryMedia(public_id: { eq: $profileUrl }) {
       url
@@ -54,7 +55,9 @@ export const isDesk = () => window.innerWidth > 768
 
 const Artist = props => {
   const [image, setImage] = useState(
-    props.data.profile && props.data.profile.url
+    props.data.profile
+      ? props.data.profile.url
+      : props.data.jsonFiles.spotify_image
   )
   const [tracks, setTracks] = useState()
   const [view, setView] = useState(viewStates.RELEASES)
@@ -129,9 +132,9 @@ const Artist = props => {
     return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
 
-  if (!image && typeof window !== "undefined") {
-    getArtistsProfile()
-  }
+  // if (!image && typeof window !== "undefined") {
+  //   getArtistsProfile()
+  // }
   if (typeof window === "undefined")
     return (
       <div>

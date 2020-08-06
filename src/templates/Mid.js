@@ -32,12 +32,15 @@ const Mid = ({ mid, midDesk, remoteReleaseSquare, setView }) => {
 
   let releaseSquare
   if (remoteReleaseSquare) {
-    releaseSquare =
-      process.env.NODE_ENV === "development"
-        ? require(`./release-square.svg`)
-        : remoteReleaseSquare.url
-            .replace("/q_auto,f_auto", "")
-            .replace("http", "https")
+    releaseSquare = remoteReleaseSquare.url
+      .replace("/q_auto,f_auto", "")
+      .replace("http", "https")
+    // releaseSquare =
+    //   process.env.NODE_ENV !== "development"
+    //     ? require(`./release-square.svg`)
+    //     : remoteReleaseSquare.url
+    //         .replace("/q_auto,f_auto", "")
+    //         .replace("http", "https")
   } else {
     releaseSquare = undefined
   }
