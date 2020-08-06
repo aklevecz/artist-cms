@@ -15,18 +15,32 @@ const IndexPage = () => {
       }
     }
   `)
+  let heading
   return (
     <Layout>
       <SEO title="Home" />
       <h1>HOWDY</h1>
-      {data.allJsonFiles.edges.map(n => (
-        <Link
-          className="link"
-          to={`/${n.node.name.split(" ").join("-").toLowerCase()}`}
-        >
-          {n.node.name}
-        </Link>
-      ))}
+      {data.allJsonFiles.edges.map(n => {
+        const link = n.node.name.split(" ").join("-").toLowerCase()
+        if (heading !== link[0]) {
+          heading = link[0]
+          heading = isNaN(heading) ? heading : "#"
+          return (
+            <>
+              <div className="link-section-heading">{heading}</div>
+              <Link className="link" to={`/${link}`}>
+                {n.node.name}
+              </Link>
+            </>
+          )
+        }
+        heading = link[0]
+        return (
+          <Link className="link" to={`/${link}`}>
+            {n.node.name}
+          </Link>
+        )
+      })}
     </Layout>
   )
 }
