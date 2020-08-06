@@ -20,27 +20,32 @@ const IndexPage = () => {
     <Layout>
       <SEO title="Home" />
       <h1>HOWDY</h1>
-      {data.allJsonFiles.edges.map(n => {
-        const link = n.node.name.split(" ").join("-").toLowerCase()
-        if (heading !== link[0]) {
-          heading = link[0]
-          heading = isNaN(heading) ? heading : "#"
+      {data.allJsonFiles.edges
+        .sort((a, b) => a.node.name.localeCompare(b.node.name))
+        .map((n, i) => {
+          const link = n.node.name.split(" ").join("-").toLowerCase()
+          const firstChar = link[0]
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+          if (heading !== firstChar) {
+            heading = firstChar
+            heading = isNaN(heading) ? heading : "#"
+            return (
+              <div key={heading}>
+                <div className="link-section-heading">{heading}</div>
+                <Link key={link} className="link" to={`/${link}`}>
+                  {n.node.name}
+                </Link>
+              </div>
+            )
+          }
+          heading = firstChar
           return (
-            <>
-              <div className="link-section-heading">{heading}</div>
-              <Link className="link" to={`/${link}`}>
-                {n.node.name}
-              </Link>
-            </>
+            <Link key={link} className="link" to={`/${link}`}>
+              {n.node.name}
+            </Link>
           )
-        }
-        heading = link[0]
-        return (
-          <Link className="link" to={`/${link}`}>
-            {n.node.name}
-          </Link>
-        )
-      })}
+        })}
     </Layout>
   )
 }
