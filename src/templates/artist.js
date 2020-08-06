@@ -129,7 +129,7 @@ const Artist = props => {
     return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
 
-  if (!image && window) {
+  if (!image && typeof window !== "undefined") {
     getArtistsProfile()
   }
   if (typeof window === "undefined")
