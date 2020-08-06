@@ -37,15 +37,14 @@ const Player = () => {
   const setup = () => {
     pauseButton().style.visibility = "hidden"
     setLoaded(true)
-    if (!window) return
-    const gatsbyContainer = document.querySelector("#___gatsby")
-    // essentially just for iphone? and ipad
-    if (gatsbyContainer.getBoundingClientRect().height > window.innerHeight)
-      return
-    const playerContainer = document.querySelector("#portal")
-    const windowHeight = window.innerHeight
-    const portalHeight = playerContainer.getBoundingClientRect().height
-    gatsbyContainer.style.height = windowHeight - portalHeight + "px"
+    // if (!window) return
+    // const gatsbyContainer = document.querySelector("#___gatsby")
+    // if (gatsbyContainer.getBoundingClientRect().height > window.innerHeight)
+    //   return
+    // const playerContainer = document.querySelector("#portal")
+    // const windowHeight = window.innerHeight
+    // const portalHeight = playerContainer.getBoundingClientRect().height
+    // gatsbyContainer.style.height = windowHeight - portalHeight + "px"
   }
 
   const seek = e => {

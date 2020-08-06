@@ -68,7 +68,6 @@ const Artist = props => {
   useEffect(() => {
     if (!RELEASE_BOX()) return
     if (view === viewStates.PLAYLIST) {
-      alert("AY")
       viewPlaylist()
     }
     if (view === viewStates.RELEASES) {
