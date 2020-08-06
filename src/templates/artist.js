@@ -17,6 +17,7 @@ export const query = graphql`
     $profileUrl: String!
     $midUrl: String!
     $midUrlDesk: String!
+    $releaseSquare: String!
   ) {
     jsonFiles(name: { regex: $regexName }) {
       name
@@ -34,6 +35,9 @@ export const query = graphql`
       url
     }
     midDesk: cloudinaryMedia(public_id: { eq: $midUrlDesk }) {
+      url
+    }
+    releaseSquare: cloudinaryMedia(public_id: { eq: $releaseSquare }) {
       url
     }
   }
@@ -100,7 +104,7 @@ const Artist = props => {
 
     return () => window.removeEventListener("storage", handlerEvent, false)
   }, [])
-  console.log(props)
+  console.log(props.data)
   if (typeof window === "undefined")
     return (
       <div>
@@ -123,6 +127,7 @@ const Artist = props => {
         mid={props.data.mid}
         midDesk={props.data.midDesk}
         releaseTrackId={props.data.jsonFiles.soundcloud_release_trackId}
+        remoteReleaseSquare={props.data.releaseSquare}
       />
       {view === viewStates.PLAYLIST && (
         <Playlist

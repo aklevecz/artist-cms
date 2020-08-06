@@ -37,6 +37,15 @@ const Player = () => {
   const setup = () => {
     pauseButton().style.visibility = "hidden"
     setLoaded(true)
+    if (!window) return
+    const gatsbyContainer = document.querySelector("#___gatsby")
+    // essentially just for iphone? and ipad
+    if (gatsbyContainer.getBoundingClientRect().height > window.innerHeight)
+      return
+    const playerContainer = document.querySelector("#portal")
+    const windowHeight = window.innerHeight
+    const portalHeight = playerContainer.getBoundingClientRect().height
+    gatsbyContainer.style.height = windowHeight - portalHeight + "px"
   }
 
   const seek = e => {
@@ -52,30 +61,33 @@ const Player = () => {
     ? require("../templates/player_desk.svg")
     : require("../templates/player.svg")
   const progress = track && track.progress_ms / track.item.duration_ms
-  console.log(track)
   return createPortal(
     <div className="player">
-      <div
-        onClick={seek}
-        style={{
-          position: "absolute",
-          top: 0,
-          height: 10,
-          width: "100%",
-          background: "yellow",
-        }}
-      ></div>
-      <div
-        onClick={seek}
-        style={{
-          position: "absolute",
-          top: 0,
-          height: 10,
-          background: "red",
-          width: progress && window.innerWidth * progress,
-        }}
-      ></div>
-      {playerType && <SVG src={playerSvg} onLoad={setup} />}
+      {playerType && (
+        <>
+          <div
+            onClick={seek}
+            style={{
+              position: "absolute",
+              top: 0,
+              height: 10,
+              width: "100%",
+              background: "yellow",
+            }}
+          ></div>
+          <div
+            onClick={seek}
+            style={{
+              position: "absolute",
+              top: 0,
+              height: 10,
+              background: "red",
+              width: progress && window.innerWidth * progress,
+            }}
+          ></div>
+          <SVG src={playerSvg} onLoad={setup} />
+        </>
+      )}
     </div>,
     document.getElementById("portal")
   )

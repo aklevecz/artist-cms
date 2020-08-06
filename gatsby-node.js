@@ -28,6 +28,7 @@ exports.createPages = ({ graphql, actions }) => {
           midUrl: `Artists/${name}/MID`,
           midUrlDesk: `Artists/${name}/MID_desk`,
           regexName: `/^${edges.node.name}$/i`,
+          releaseSquare: `Artists/${name}/release-square`,
         },
       })
     })

@@ -73,6 +73,7 @@ const Top = ({
     const profileImage = document
       .querySelector("#PROFILE")
       .querySelector("image")
+    console.log(profileImage)
     profileImage.setAttribute("xlink:href", profileImgUrl)
 
     playlistButton().setAttribute("class", "button")
