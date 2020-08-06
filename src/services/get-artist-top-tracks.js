@@ -4,7 +4,7 @@ export default async artistId => {
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("arcsasT")}`,
+        Authorization: `Bearer ${localStorage.getItem("appToken")}`,
       },
     }
   )
