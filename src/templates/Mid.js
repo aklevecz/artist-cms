@@ -38,7 +38,7 @@ const Mid = ({ mid, midDesk, remoteReleaseSquare }) => {
   const remoteSvgFile = isDesk() ? midDesk : mid
   console.log(remoteReleaseSquare)
   const releaseSquare =
-    process.env.NODE_ENV !== "development"
+    process.env.NODE_ENV === "development"
       ? require(`./release-square.svg`)
       : remoteReleaseSquare.url
           .replace("/q_auto,f_auto", "")
