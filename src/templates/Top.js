@@ -21,6 +21,7 @@ const Top = ({
   setView,
   spotifyAuth,
   viewStates,
+  setTopLoaded,
 }) => {
   const [loaded, setLoaded] = useState(false)
   const context = useContext(playerContext)
@@ -116,6 +117,7 @@ const Top = ({
       textEl.innerHTML = templateString
     }
     setLoaded(true)
+    setTopLoaded(true)
   }
 
   const svgSrc = isDesk() ? require("./TOP_desk.svg") : require("./TOP.svg")

@@ -61,6 +61,7 @@ const Artist = props => {
   )
   const [tracks, setTracks] = useState()
   const [view, setView] = useState(viewStates.RELEASES)
+  const [topLoaded, setTopLoaded] = useState()
   const context = useContext(playerContext)
 
   const viewPlaylist = () => {
@@ -154,23 +155,27 @@ const Artist = props => {
           setView={setView}
           viewStates={viewStates}
           spotifyAuth={context.spotifyAuth}
+          setTopLoaded={setTopLoaded}
         />
       )}
-      {image && (
+      {topLoaded && (
         <Mid
           mid={props.data.mid}
           midDesk={props.data.midDesk}
           releaseTrackId={props.data.jsonFiles.soundcloud_release_trackId}
           remoteReleaseSquare={props.data.releaseSquare}
           setView={setView}
-        />
-      )}
-      {view === viewStates.PLAYLIST && (
-        <Playlist
+          view={view}
           tracks={tracks}
           playlistUri={props.data.jsonFiles.curated_playlist}
         />
       )}
+      {/* {view === viewStates.PLAYLIST && (
+        <Playlist
+          tracks={tracks}
+          playlistUri={props.data.jsonFiles.curated_playlist}
+        />
+      )} */}
       <Player />
     </Layout>
   )

@@ -8,7 +8,7 @@ import seekTrack from "../services/seek-track"
 
 const pauseButton = () => document.querySelector("#pause-button")
 const playButton = () => document.querySelector("#play-button")
-
+window.pauseButton = pauseButton
 const Player = () => {
   const {
     isPlaying,

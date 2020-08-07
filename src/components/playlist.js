@@ -13,9 +13,18 @@ const Playlist = ({ tracks, playlistUri }) => {
 
   useEffect(() => {
     if (typeof window === "undefined") return <div></div>
-    const { x, y } = document.querySelector("#body-box").getBoundingClientRect()
+    const { x, y, height } = document
+      .querySelector("#body-box")
+      .getBoundingClientRect()
     const padding = 10
-    setXY({ x: x + padding, y: y + window.scrollY + padding })
+    // setXY({ x: x + padding, y: y + window.scrollY + padding })
+    setXY({ x: x + padding, y: 0 })
+
+    const midHeight = document
+      .querySelector("#mid-container")
+      .getBoundingClientRect().height
+    const playlistContainer = document.querySelector(".playlist-container")
+    playlistContainer.style.height = height - 20 + "px"
   }, [])
   useEffect(() => {
     context.initPlayer()
@@ -33,7 +42,13 @@ const Playlist = ({ tracks, playlistUri }) => {
       )}
       <div
         className="playlist-container"
-        style={{ color: "white", position: "absolute", top: xy.y, left: xy.x }}
+        style={{
+          color: "white",
+          position: "absolute",
+          top: xy.y,
+          left: xy.x,
+          width: window.innerWidth - xy.x - 50,
+        }}
       >
         {/* <div
           style={{ position: "absolute", width: 320, cursor: "pointer" }}

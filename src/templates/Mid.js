@@ -3,7 +3,16 @@ import SVG from "react-inlinesvg"
 import { playerContext } from "../../wrap-with-provider"
 import { isDesk } from "./artist"
 import { viewStates } from "./artist"
-const Mid = ({ mid, midDesk, remoteReleaseSquare, setView }) => {
+import Playlist from "../components/playlist"
+const Mid = ({
+  mid,
+  midDesk,
+  remoteReleaseSquare,
+  setView,
+  view,
+  tracks,
+  playlistUri,
+}) => {
   const context = useContext(playerContext)
 
   // redundant
@@ -21,9 +30,12 @@ const Mid = ({ mid, midDesk, remoteReleaseSquare, setView }) => {
     const bbox = document.querySelector("#BODY_BOX")
     const release = document.querySelector("#RELEASES")
     const { x, y, width, height } = bbox.getBoundingClientRect()
-    release.setAttribute("width", width)
+    console.log(x, y, height)
+    release.setAttribute("width", "100%")
+    release.style.maxWidth = "400px"
     release.style.position = "absolute"
-    release.style.top = y
+    console.log(document.documentElement.scrollTop)
+    // release.style.top = y + document.documentElement.scrollTop
     release.style.left = x
     const listenButton = document.querySelector("#listen")
     listenButton.setAttribute("class", "button")
@@ -50,6 +62,9 @@ const Mid = ({ mid, midDesk, remoteReleaseSquare, setView }) => {
     <div id="mid-container">
       <SVG src={svgSrc} onLoad={checkView} />
       {releaseSquare && <SVG src={releaseSquare} onLoad={setupSquare} />}
+      {view === viewStates.PLAYLIST && (
+        <Playlist tracks={tracks} playlistUri={playlistUri} />
+      )}
     </div>
   )
 }
