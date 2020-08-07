@@ -113,6 +113,12 @@ const Artist = props => {
     context.getAppToken().then(getArtistPlaylist)
     context.getDevices()
     context.initSoundcloud(props.data.jsonFiles.soundcloud_release_trackId)
+    if (typeof window === "undefined") return
+    document.querySelector("main").style.height = window.innerHeight - 30 + "px"
+    const windowHeightH = window.innerHeight / 2
+    document.querySelector(
+      "main"
+    ).style.gridTemplateRows = `${windowHeightH}px ${windowHeightH}px`
   }, [])
 
   useEffect(() => {
@@ -136,7 +142,6 @@ const Artist = props => {
   // if (!image && typeof window !== "undefined") {
   //   getArtistsProfile()
   // }
-  console.log(props)
   if (typeof window === "undefined")
     return (
       <div>

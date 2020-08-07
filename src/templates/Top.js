@@ -123,7 +123,7 @@ const Top = ({
   const svgSrc = isDesk() ? require("./TOP_desk.svg") : require("./TOP.svg")
   return (
     <div>
-      <SVG src={svgSrc} onLoad={setupButtons} />
+      <SVG className="svg-view" src={svgSrc} onLoad={setupButtons} />
     </div>
   )
 }

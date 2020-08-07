@@ -27,6 +27,7 @@ const Mid = ({
   }
 
   const setupSquare = () => {
+    return
     const bbox = document.querySelector("#BODY_BOX")
     const release = document.querySelector("#RELEASES")
     const { x, y, width, height } = bbox.getBoundingClientRect()
@@ -34,6 +35,10 @@ const Mid = ({
     // release.setAttribute("width", "100%")
     release.style.maxWidth = "500px"
     release.style.position = "absolute"
+    release.style.top = 0
+    release.style.maxHeight = window.innerHeight / 2 - 40 + "px"
+    document.querySelector("#mid-container").style.height =
+      window.innerHeight / 2 - 40 + "px"
     console.log(document.documentElement.scrollTop)
     // release.style.top = y + document.documentElement.scrollTop
     release.style.left = x
@@ -65,8 +70,19 @@ const Mid = ({
   const svgSrc = require(`./MID${isDesk() ? "_desk" : ""}.svg`)
   return (
     <div id="mid-container">
-      <SVG src={svgSrc} onLoad={checkView} />
-      {releaseSquare && <SVG src={releaseSquare} onLoad={setupSquare} />}
+      {/* <SVG
+        className="svg-view"
+        src={svgSrc}
+        onLoad={checkView}
+        style={{ height: window.innerHeight / 2 - 20 }}
+      /> */}
+      {releaseSquare && view !== viewStates.PLAYLIST && (
+        <SVG
+          src={releaseSquare}
+          onLoad={setupSquare}
+          style={{ height: "90%", display: "block", margin: "auto" }}
+        />
+      )}
       {view === viewStates.PLAYLIST && (
         <Playlist tracks={tracks} playlistUri={playlistUri} />
       )}
