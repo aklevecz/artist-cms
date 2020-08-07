@@ -70,7 +70,7 @@ const Player = () => {
               top: 0,
               height: 10,
               width: "100%",
-              background: "yellow",
+              background: "#dd5e5e",
             }}
           ></div>
           <div
@@ -79,7 +79,7 @@ const Player = () => {
               position: "absolute",
               top: 0,
               height: 10,
-              background: "red",
+              background: "#c688ff",
               width: progress && window.innerWidth * progress,
             }}
           ></div>
