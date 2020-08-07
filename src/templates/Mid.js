@@ -31,8 +31,8 @@ const Mid = ({
     const release = document.querySelector("#RELEASES")
     const { x, y, width, height } = bbox.getBoundingClientRect()
     console.log(x, y, height)
-    release.setAttribute("width", "100%")
-    release.style.maxWidth = "400px"
+    // release.setAttribute("width", "100%")
+    release.style.maxWidth = "500px"
     release.style.position = "absolute"
     console.log(document.documentElement.scrollTop)
     // release.style.top = y + document.documentElement.scrollTop

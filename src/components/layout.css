@@ -4,6 +4,7 @@ body {
   margin: 0px;
   background: black;
   color: white;
+  overflow-x: none;
 }
 
 #portal {
