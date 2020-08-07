@@ -27,7 +27,6 @@ const Mid = ({
   }
 
   const setupSquare = () => {
-    return
     const bbox = document.querySelector("#BODY_BOX")
     const release = document.querySelector("#RELEASES")
     const { x, y, width, height } = bbox.getBoundingClientRect()
@@ -70,19 +69,15 @@ const Mid = ({
   const svgSrc = require(`./MID${isDesk() ? "_desk" : ""}.svg`)
   return (
     <div id="mid-container">
-      {/* <SVG
+      {releaseSquare && view !== viewStates.PLAYLIST && (
+        <SVG src={releaseSquare} onLoad={setupSquare} />
+      )}
+      <SVG
         className="svg-view"
         src={svgSrc}
         onLoad={checkView}
-        style={{ height: window.innerHeight / 2 - 20 }}
-      /> */}
-      {releaseSquare && view !== viewStates.PLAYLIST && (
-        <SVG
-          src={releaseSquare}
-          onLoad={setupSquare}
-          style={{ height: "90%", display: "block", margin: "auto" }}
-        />
-      )}
+        // style={{ height: window.innerHeight / 2 - 20 }}
+      />
       {view === viewStates.PLAYLIST && (
         <Playlist tracks={tracks} playlistUri={playlistUri} />
       )}

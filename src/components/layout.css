@@ -32,11 +32,11 @@ body {
   grid-template-rows: 50% 50%;
 } */
 
-.svg-view {
+/* .svg-view {
   height: 90%;
   display: block;
   margin: auto;
-}
+} */
 
 @media screen and (min-width: 768px) {
   .layout {

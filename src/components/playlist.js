@@ -12,7 +12,6 @@ const Playlist = ({ tracks, playlistUri }) => {
   const context = useContext(playerContext)
 
   useEffect(() => {
-    return
     if (typeof window === "undefined") return <div></div>
     const { x, y, height } = document
       .querySelector("#body-box")
@@ -45,10 +44,10 @@ const Playlist = ({ tracks, playlistUri }) => {
         className="playlist-container"
         style={{
           color: "white",
-          // position: "absolute",
-          // top: xy.y,
-          // left: xy.x,
-          // width: window.innerWidth - xy.x - 50,
+          position: "absolute",
+          top: xy.y,
+          left: xy.x,
+          width: window.innerWidth - xy.x - 50,
         }}
       >
         {/* <div
