@@ -27,10 +27,10 @@ body {
   margin: auto;
 }
 
-main {
+/* main {
   display: grid;
   grid-template-rows: 50% 50%;
-}
+} */
 
 .svg-view {
   height: 90%;
