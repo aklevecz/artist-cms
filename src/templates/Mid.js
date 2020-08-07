@@ -40,6 +40,11 @@ const Mid = ({
     const listenButton = document.querySelector("#listen")
     listenButton.setAttribute("class", "button")
     listenButton.onclick = () => context.playSoundcloud()
+    const viewportmeta = document.querySelector("meta[name=viewport]")
+    viewportmeta.setAttribute(
+      "content",
+      `width=${window.innerWidth - 10}; user-scaleable=yes;`
+    )
   }
 
   let releaseSquare
