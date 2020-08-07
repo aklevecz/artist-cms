@@ -59,7 +59,8 @@ const Player = () => {
     ? require("../templates/player_desk.svg")
     : require("../templates/player.svg")
   const progress = track && track.progress_ms / track.item.duration_ms
-  return createPortal(
+  // return createPortal(
+  return (
     <div className="player">
       {playerType && (
         <>
@@ -86,8 +87,9 @@ const Player = () => {
           <SVG src={playerSvg} onLoad={setup} />
         </>
       )}
-    </div>,
-    document.getElementById("portal")
+    </div>
+    // ,
+    // document.getElementById("portal")
   )
 }
 

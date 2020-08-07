@@ -35,7 +35,7 @@ const Mid = ({
     release.style.maxWidth = "500px"
     release.style.position = "absolute"
     release.style.top = 0
-    release.style.maxHeight = window.innerHeight / 2 - 40 + "px"
+    // release.style.maxHeight = window.innerHeight / 2 - 40 + "px"
     document.querySelector("#mid-container").style.height =
       window.innerHeight / 2 - 40 + "px"
     console.log(document.documentElement.scrollTop)

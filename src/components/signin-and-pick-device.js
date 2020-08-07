@@ -58,8 +58,8 @@ const SignInAndPickDevice = ({ playlistUri, showPopup, queuedTrack }) => {
   return (
     <>
       {/* This is awkward because if they are already signed in it is then denying Spotify*/}
-      <div onClick={denySpotify} className="popup-overlay"></div>
-      <Popup title={title}>
+      {/* <div onClick={denySpotify} className="popup-overlay"></div> */}
+      <Popup title={title} overlayOnClick={denySpotify}>
         {spotifyAuth && (
           <DevicePicker devices={devices} pickDevice={selectDevice} />
         )}
