@@ -1,6 +1,7 @@
 import React from "react"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import ScrollUp from "../components/scroll-up"
 import { useStaticQuery, graphql, Link } from "gatsby"
 
 const IndexPage = () => {
@@ -20,6 +21,8 @@ const IndexPage = () => {
     <Layout>
       <SEO title="Home" />
       <h1>HOWDY</h1>
+
+      <ScrollUp />
       {data.allJsonFiles.edges
         .sort((a, b) => a.node.name.localeCompare(b.node.name))
         .map((n, i) => {

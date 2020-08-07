@@ -94,9 +94,21 @@ const Top = ({
           if (i === 0) {
             return word
           } else {
-            console.log(i)
-            const t = tspans[i - 1].cloneNode(false)
-            t.innerHTML = word
+            let t
+            try {
+              t = tspans[i - 1].cloneNode(false)
+              t.innerHTML = word
+            } catch (e) {
+              console.log(e)
+              t = tspans[tspans.length - 1].cloneNode()
+              const tDiff = parseInt(
+                tspans[tspans.length - 2].getAttribute("y")
+              )
+              const tY = parseInt(t.getAttribute("y"))
+              const delta = tY - tDiff
+              t.setAttribute("y", delta + tY)
+              t.innerHTML = word
+            }
             return t.outerHTML
           }
         })

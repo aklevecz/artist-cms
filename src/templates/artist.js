@@ -135,6 +135,7 @@ const Artist = props => {
   // if (!image && typeof window !== "undefined") {
   //   getArtistsProfile()
   // }
+  console.log(props)
   if (typeof window === "undefined")
     return (
       <div>
