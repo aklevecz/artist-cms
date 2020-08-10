@@ -4,7 +4,6 @@ import startPlayingPlaylist from "./src/services/start-playing-playlist"
 import pausePlaylistTrack from "./src/services/pause-playlist-track"
 import getUserDevices from "./src/services/get-user-devices"
 import getUserCurrentlyPlaying from "./src/services/get-user-currently-playing"
-import SEO from "./src/components/seo"
 
 const RAPTOR_REPO_NAME = "Raptor Repo Player"
 export const playerContext = React.createContext()
@@ -18,7 +17,14 @@ const showActiveTrack = uri => {
     const element = document.getElementById(uri)
     element.classList.add("playing")
   } catch (err) {
-    console.log("cant find this boy")
+    try {
+      const element = getElementByXpath(
+        `//*[@track-data="spotify:track:${uri}"]`
+      )
+      element.classList.add("playing")
+    } catch (err) {
+      console.log("cant find this boy")
+    }
   }
 }
 const Provider = ({ children }) => {
@@ -32,7 +38,25 @@ const Provider = ({ children }) => {
   const [chosenDevice, setChosenDevice] = useState()
   const [devices, setDevices] = useState()
   const [track, setTrack] = useState()
+  useEffect(() => {
+    const currentToken = localStorage.getItem("arcsasT")
+    if (currentToken) {
+      console.log("check the token")
+      // getUser(currentToken).then(data => setUser(data.display_name))
+    }
 
+    const handlerEvent = event => {
+      console.log("index storage event")
+      if (event.key !== "arcsasT") return
+      console.log(event.key)
+      // getArtistPlaylist()
+      initPlayer()
+      getDevices()
+    }
+    if (window) window.addEventListener("storage", handlerEvent, false)
+
+    return () => window.removeEventListener("storage", handlerEvent, false)
+  }, [])
   useEffect(() => {
     if (!devices || playerType === "soundcloud") return
     let interval
@@ -97,10 +121,11 @@ const Provider = ({ children }) => {
         setSpotifyAuth(false)
       })
   }
-  const pickDevice = deviceId => {
+  const pickDevice = (deviceId, playlistUri, trackUri) => {
     setChosenDevice(deviceId)
     localStorage.setItem("deviceId", deviceId)
-    playSpotifyTrack()
+    // Do I need a conditional here?
+    playSpotifyTrack(playlistUri, trackUri)
   }
   const initSoundcloud = trackId => {
     // pausePlaylistTrack()
@@ -178,65 +203,68 @@ const Provider = ({ children }) => {
   const resumeSpotifyPlayback = () => startPlayingPlaylist()
 
   const initPlayer = () => {
-    const player = new window.Spotify.Player({
-      name: RAPTOR_REPO_NAME,
-      getOAuthToken: cb => {
-        cb(localStorage.getItem("arcsasT"))
-      },
-    })
-    player.connect()
-    player.addListener("ready", ({ device_id }) => {
-      console.log("Ready with Device ID", device_id)
-      localStorage.setItem("deviceId", device_id)
-      getDevices()
-      //   setChosenDevice(device_id)
+    return new Promise((resolve, reject) => {
+      const player = new window.Spotify.Player({
+        name: RAPTOR_REPO_NAME,
+        getOAuthToken: cb => {
+          cb(localStorage.getItem("arcsasT"))
+        },
+      })
+      player.connect()
+      player.addListener("ready", ({ device_id }) => {
+        console.log("Ready with Device ID", device_id)
+        localStorage.setItem("deviceId", device_id)
+        getDevices()
+        resolve()
+        //   setChosenDevice(device_id)
 
-      // Error handling
-      player.addListener("initialization_error", ({ message }) => {
-        console.error(message)
-      })
-      player.addListener("authentication_error", async ({ message }) => {
-        console.log("auth error")
-        if (localStorage.getItem("refrashT")) {
-          const newToken = await refreshToken()
-          console.log(newToken)
-          localStorage.setItem("token", newToken.token)
-          player = new window.Spotify.Player({
-            name: RAPTOR_REPO_NAME,
-            getOAuthToken: cb => {
-              cb(newToken.token)
-            },
-          })
-          player.connect()
-        } else {
-          console.log("this user is not remembered")
-        }
+        // Error handling
+        player.addListener("initialization_error", ({ message }) => {
+          console.error(message)
+        })
+        player.addListener("authentication_error", async ({ message }) => {
+          console.log("auth error")
+          if (localStorage.getItem("refrashT")) {
+            const newToken = await refreshToken()
+            console.log(newToken)
+            localStorage.setItem("token", newToken.token)
+            player = new window.Spotify.Player({
+              name: RAPTOR_REPO_NAME,
+              getOAuthToken: cb => {
+                cb(newToken.token)
+              },
+            })
+            player.connect()
+          } else {
+            console.log("this user is not remembered")
+          }
 
-        console.error(message)
-      })
-      player.addListener("account_error", ({ message }) => {
-        console.error(message)
-      })
-      player.addListener("playback_error", ({ message }) => {
-        console.error(message)
-      })
+          console.error(message)
+        })
+        player.addListener("account_error", ({ message }) => {
+          console.error(message)
+        })
+        player.addListener("playback_error", ({ message }) => {
+          console.error(message)
+        })
 
-      // Playback status updates
-      player.addListener("player_state_changed", state => {
-        if (!state) return
-        const currentTrack = state.track_window.current_track
-        console.log(state)
-        const paused = state.paused
-        showActiveTrack(currentTrack.uri.split(":")[2])
-        // setTrack(currentTrack)
-        setIsPlaying(!paused)
-        console.log(currentTrack)
-      })
+        // Playback status updates
+        player.addListener("player_state_changed", state => {
+          if (!state) return
+          const currentTrack = state.track_window.current_track
+          console.log(state)
+          const paused = state.paused
+          showActiveTrack(currentTrack.uri.split(":")[2])
+          // setTrack(currentTrack)
+          setIsPlaying(!paused)
+          console.log(currentTrack)
+        })
 
-      player.addListener("not_ready", ({ device_id }) => {
-        console.log("Device ID has gone offline", device_id)
+        player.addListener("not_ready", ({ device_id }) => {
+          console.log("Device ID has gone offline", device_id)
+        })
+        setPlayer(player)
       })
-      setPlayer(player)
     })
   }
   return (
@@ -263,6 +291,7 @@ const Provider = ({ children }) => {
         setChosenDevice,
         setPlayerType,
         setSpotifyAuth,
+        setTrack,
         spotifyAuth,
         track,
       }}
@@ -274,3 +303,13 @@ const Provider = ({ children }) => {
 }
 
 export default ({ element }) => <Provider>{element}</Provider>
+
+function getElementByXpath(path) {
+  return document.evaluate(
+    path,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  ).singleNodeValue
+}

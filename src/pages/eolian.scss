@@ -1,0 +1,51 @@
+html,
+body {
+  //   background: white;
+}
+
+$red-fill: #ff5050;
+@keyframes glowing {
+  0% {
+    fill: $red-fill;
+  }
+  50% {
+    fill: black;
+  }
+  100% {
+    fill: $red-fill;
+  }
+}
+
+#soundcloud,
+#spotify,
+#bandcamp {
+  animation: glowing 5000ms infinite;
+}
+
+button {
+  cursor: pointer;
+}
+
+.playing {
+  fill: #59ffc5 !important;
+}
+
+.device-box-container {
+  position: absolute;
+  padding: 11px 15px 5px;
+  background: #8a8eff;
+  border-radius: 5px;
+  text-align: "center";
+  font-family: Arial;
+}
+
+.bottom-notch {
+  position: absolute;
+  left: 38%;
+  width: 40px;
+  bottom: -10px;
+
+  polyline {
+    fill: #8a8eff !important;
+  }
+}

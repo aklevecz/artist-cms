@@ -30,6 +30,8 @@ export default (contextUri, playlistTrackUri, givenDeviceId, singleTrack) => {
   )
     .then(r => {
       if (r.status === 401) throw new Error(AUTH_ERROR)
+      if (r.status === 403) throw new Error("Context needed")
+      return r
       return r.json()
     })
     .then(data => data)
