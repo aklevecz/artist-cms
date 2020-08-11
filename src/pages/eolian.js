@@ -12,7 +12,7 @@ import pausePlaylistTrack from "../services/pause-playlist-track"
 import startPlayingPlaylist from "../services/start-playing-playlist"
 import SignInPopup from "../components/signin-popup"
 import setVolume from "../services/set-volume"
-
+import loadingGif from "../images/loading.gif"
 const albumUri = "spotify:album:00DHViaM6QJwQjipBFoqsB"
 const trackUris = {
   eolian: "spotify:track:495VVx56Vd5HkCw914GfCZ",
@@ -274,9 +274,19 @@ const Eolian = () => {
       ebid("slider").getBoundingClientRect().width / 2
     ebid("slider").style.left = volPos + "px"
     if (typeof window === "undefined") return
-    ebid("volume-target").setAttribute("x2", volPos * (317 / window.innerWidth))
+    ebid("volume-target").setAttribute(
+      "x2",
+      volPos *
+        (parseInt(
+          document
+            .querySelectorAll("svg")[1]
+            .getAttribute("viewBox")
+            .split(" ")[2]
+        ) /
+          window.innerWidth)
+    )
     if (Date.now() - volChangeRef.current > 1000) {
-      // setVolume(e.target.value)
+      setVolume(e.target.value)
       volChangeRef.current = Date.now()
     }
   }
@@ -291,8 +301,6 @@ const Eolian = () => {
   // ** SETUP **
   const setup = () => {
     const viewBox = document.querySelector("#viewBox")
-    document.body.style.background = viewBox.style.fill
-    document.querySelector("html").style.background = viewBox.style.fill
     const svg = document.querySelectorAll("svg")[1]
     svg.setAttribute(
       "viewBox",
@@ -353,7 +361,11 @@ const Eolian = () => {
     addClass(listenButton, "button")
     listenButton.onclick = moveTracks
 
-    setLoaded(true)
+    setTimeout(() => {
+      document.body.style.background = viewBox.style.fill
+      document.querySelector("html").style.background = viewBox.style.fill
+      setLoaded(true)
+    }, 3000)
 
     if (typeof window !== "undefined")
       ebid("bandcamp").onclick = () =>
@@ -375,6 +387,7 @@ const Eolian = () => {
   // components of a frontend that can then be unified once they are all loaded
 
   // This would allow control layers to be more modular
+
   return (
     <>
       <div>
@@ -384,6 +397,13 @@ const Eolian = () => {
           src={require("../images/star.svg")}
         />
       </div>
+      {!loaded && (
+        <img
+          style={{ display: "block", margin: "16% auto" }}
+          id="loading-gif"
+          src={loadingGif}
+        />
+      )}
       {showPopup && !context.chosenDevice && (
         <SignInPopup showPopup={setShowPopup} />
       )}
@@ -395,7 +415,11 @@ const Eolian = () => {
           queuedTrack={queuedTrack}
         />
       )}
-      <SVG src={src} onLoad={setup} />
+      <SVG
+        src={src}
+        onLoad={setup}
+        style={{ opacity: loaded ? 1 : 0, transition: "opacity 1s" }}
+      />
       <input
         type="range"
         min="0"
