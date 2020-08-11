@@ -61,12 +61,7 @@ const DevicePicker = ({
 }) => {
   const deviceBoxRef = useRef()
   const pickIcon = ebid("pick-device")
-  const {
-    x,
-    y,
-    width: pWidth,
-    height: pHeight,
-  } = pickIcon.getBoundingClientRect()
+  const { x, y, width: pWidth } = pickIcon.getBoundingClientRect()
   useEffect(() => {
     const { height, width } = deviceBoxRef.current.getBoundingClientRect()
     deviceBoxRef.current.style.marginTop =
@@ -180,19 +175,6 @@ const Eolian = () => {
       ebid("pick-device").style.display = "none"
     }
   }, [playerOpen])
-
-  // Redudant track naming on the player
-  // useEffect(() => {
-  //   if (!loaded) return
-  //   const currentTrack = ebid("track-name").textContent
-  //   if (currentTrack !== track) {
-  //     lerpOpacityOut(ebid("track-name")).then(() => {
-  //       ebid("track-name").textContent = track
-  //       lerpOpacityIn(ebid("track-name"))
-  //     })
-  //   }
-  //   ebid("track-name").textContent = currentTrack
-  // }, [track])
 
   useEffect(() => {
     if (!loaded) return
@@ -392,7 +374,7 @@ const Eolian = () => {
     <>
       <div>
         <SVG
-          style={{ width: 20 }}
+          style={{ width: 20, display: "none" }}
           id="slider"
           src={require("../images/star.svg")}
         />
