@@ -1,6 +1,7 @@
 html,
 body {
   //   background: white;
+  // height: 100000px;
 }
 
 $red-fill: #ff5050;
@@ -20,9 +21,15 @@ $red-fill: #ff5050;
 #spotify,
 #bandcamp {
   animation: glowing 5000ms infinite;
+  cursor: pointer;
 }
 
-button {
+button,
+#pause,
+#play,
+#player-close,
+#pick-device,
+.device {
   cursor: pointer;
 }
 
@@ -48,4 +55,19 @@ button {
   polyline {
     fill: #8a8eff !important;
   }
+}
+
+// this is the actual slider
+.slider {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 10px;
+  opacity: 0;
+}
+
+// this is the slider icon
+#slider {
+  position: absolute;
+  display: "none";
 }

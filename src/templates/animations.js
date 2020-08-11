@@ -22,21 +22,24 @@ export const lerpTranslateXY = (
   finishY,
   c = 0.01
 ) => {
-  let frame
-  let counter = 0
-  let valX = startX
-  let valY = startY
-  const animate = () => {
-    if (counter > 1) {
-      return cancelAnimationFrame(frame)
+  return new Promise(resolve => {
+    let frame
+    let counter = 0
+    let valX = startX
+    let valY = startY
+    const animate = () => {
+      valX = startX + (finishX - startX) * easeIn(counter)
+      valY = startY + (finishY - startY) * easeIn(counter)
+      el.setAttribute("transform", `translate(${valX}, ${valY})`)
+      if (counter > 1) {
+        resolve()
+        return cancelAnimationFrame(frame)
+      }
+      counter += c
+      requestAnimationFrame(animate)
     }
-    valX = startX + (finishX - startX) * easeIn(counter)
-    valY = startY + (finishY - startY) * easeIn(counter)
-    el.setAttribute("transform", `translate(${valX}, ${valY})`)
-    counter += c
-    requestAnimationFrame(animate)
-  }
-  animate()
+    animate()
+  })
 }
 
 export const lerpScrollY = (start, finish) => {

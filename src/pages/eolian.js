@@ -11,6 +11,7 @@ import { playerContext } from "../../wrap-with-provider"
 import pausePlaylistTrack from "../services/pause-playlist-track"
 import startPlayingPlaylist from "../services/start-playing-playlist"
 import SignInPopup from "../components/signin-popup"
+import setVolume from "../services/set-volume"
 
 const albumUri = "spotify:album:00DHViaM6QJwQjipBFoqsB"
 const trackUris = {
@@ -69,7 +70,7 @@ const DevicePicker = ({
   useEffect(() => {
     const { height, width } = deviceBoxRef.current.getBoundingClientRect()
     deviceBoxRef.current.style.marginTop =
-      -1 * (height / 2 + 20 * devices.length) + "px"
+      -1 * (height / 2 + 10 * devices.length + 20 + 10) + "px"
     deviceBoxRef.current.style.marginLeft = (-1 * width) / 2 + pWidth / 2 + "px"
   }, [devices])
   if (typeof window === "undefined") return <div></div>
@@ -82,16 +83,27 @@ const DevicePicker = ({
         left: x,
       }}
     >
-      {devices.slice(0, 3).map(device => (
+      {devices.map(device => (
         <div
-          style={{ marginBottom: 10 }}
+          style={{
+            textAlign: "left",
+            display: "grid",
+            gridTemplateColumns: "12px 1fr",
+            gridColumnGap: "7px",
+          }}
           key={device.id}
+          className="device"
           onClick={() => {
             pickDevice(device.id, albumUri, queuedTrack)
             setShowDevicePicker(false)
           }}
         >
-          {device.name}
+          {device.is_active && (
+            <div style={{ height: 10, fill: "#3fff48" }}>
+              <SVG src={require("../images/music-note.svg")} />
+            </div>
+          )}
+          <div style={{ gridColumn: 2 }}>{device.name}</div>
         </div>
       ))}
       <div className="bottom-notch">
@@ -112,7 +124,7 @@ const Eolian = () => {
   const [showPopup, setShowPopup] = useState(false)
   const [queuedTrack, setQueuedTrack] = useState("")
   const [showDevicePicker, setShowDevicePicker] = useState(false)
-  const [cursor, setCursor] = useState({ progress: 0, duration: 0 })
+  const volChangeRef = useRef(Date.now())
   const [loaded, setLoaded] = useState(false)
 
   const context = useContext(playerContext)
@@ -131,23 +143,37 @@ const Eolian = () => {
     const length = dX2 - dX1
     const progressEl = ebid("progress")
     progressEl.setAttribute("x2", dX1 + length * (progress / duration))
-    // setCursor({ duration, progress })
   }, [context.track])
+
+  // **PLAYER OPEN EFFECT**
   useEffect(() => {
-    if (!loaded) return
+    if (!loaded || typeof window === "undefined") return
     const player = ebid("player")
     const playerTarget = ebid("player-target")
     const tY = parseFloat(playerTarget.getAttribute("y"))
     const cY = parseFloat(player.querySelector("#bg").getAttribute("y"))
     if (playerOpen) {
-      lerpTranslateXY(player, 1, 1, 0, tY - cY, 0.07)
+      ebid("slider").style.display = "inherit"
+      lerpTranslateXY(player, 1, 1, 0, tY - cY, 0.05).then(() => {
+        const { x: vX, y: vY, width } = ebid(
+          "volume-target"
+        ).getBoundingClientRect()
+        ebid("volume-slider").style.top = vY + window.scrollY - 5 + "px"
+        ebid("volume-slider").style.left = vX + "px"
+        ebid("volume-slider").style.width = width + "px"
+
+        const x1 = parseInt(ebid("volume-target").getAttribute("x1"))
+        const x2 = parseInt(ebid("volume-target").getAttribute("x2"))
+        ebid("volume-target").setAttribute("x2", (x2 - x1) / 2 + x1)
+      })
     } else {
+      ebid("slider").style.display = "none"
       const playerY = player
         .getAttribute("transform")
         .split("(")[1]
         .split(")")[0]
         .split(",")[1]
-      lerpTranslateXY(player, 1, 1, parseFloat(playerY), 0, 0.07)
+      lerpTranslateXY(player, 1, 1, parseFloat(playerY), 0, 0.05)
       setShowDevicePicker(false)
     }
     if (!context.spotifyAuth) {
@@ -155,17 +181,31 @@ const Eolian = () => {
     }
   }, [playerOpen])
 
+  // Redudant track naming on the player
+  // useEffect(() => {
+  //   if (!loaded) return
+  //   const currentTrack = ebid("track-name").textContent
+  //   if (currentTrack !== track) {
+  //     lerpOpacityOut(ebid("track-name")).then(() => {
+  //       ebid("track-name").textContent = track
+  //       lerpOpacityIn(ebid("track-name"))
+  //     })
+  //   }
+  //   ebid("track-name").textContent = currentTrack
+  // }, [track])
+
   useEffect(() => {
     if (!loaded) return
     const currentTrack = ebid("track-name").textContent
-    if (currentTrack !== track) {
+    if (currentTrack !== context.track.item.name) {
       lerpOpacityOut(ebid("track-name")).then(() => {
-        ebid("track-name").textContent = track
+        ebid("track-name").textContent = context.track.item.name
         lerpOpacityIn(ebid("track-name"))
       })
     }
     ebid("track-name").textContent = currentTrack
-  }, [track])
+  }, [context.track && context.track.item.name])
+  // ***
 
   useEffect(() => {
     if (playerOpen) {
@@ -216,30 +256,49 @@ const Eolian = () => {
   }, [showDevicePicker, context.spotifyAuth])
 
   const startPlaying = () => {
-    // startPlayingPlaylist(albumUri, queuedTrack).catch(() => {
-    //   console.log('ferg')
-    // })
     startPlayingPlaylist().catch(e => {
-      console.log(e.message)
       startPlayingPlaylist(albumUri, queuedTrack)
     })
   }
 
+  // ** VOLUME CHANGE
+  const volumeChange = e => {
+    // STAR IS THE ICON #SLIDER IS ITS DIV
+    ebid("star").style.display = "inherit"
+    const { x, y, width } = e.target.getBoundingClientRect()
+    // SLIDER IS THE INPUT ELEMENT
+    ebid("slider").style.top = y + window.scrollY - 7 + "px"
+    const volPos =
+      x +
+      width * (e.target.value / 100) -
+      ebid("slider").getBoundingClientRect().width / 2
+    ebid("slider").style.left = volPos + "px"
+    if (typeof window === "undefined") return
+    ebid("volume-target").setAttribute("x2", volPos * (317 / window.innerWidth))
+    if (Date.now() - volChangeRef.current > 1000) {
+      // setVolume(e.target.value)
+      volChangeRef.current = Date.now()
+    }
+  }
+
+  // UPDATE PLAY CLICK
   useEffect(() => {
     if (!loaded) return
     const play = ebid("play")
     play.onclick = () => startPlaying()
   }, [queuedTrack])
 
+  // ** SETUP **
   const setup = () => {
     const viewBox = document.querySelector("#viewBox")
     document.body.style.background = viewBox.style.fill
     document.querySelector("html").style.background = viewBox.style.fill
-    const svg = document.querySelector("svg")
+    const svg = document.querySelectorAll("svg")[1]
     svg.setAttribute(
       "viewBox",
       `0 0 ${viewBox.getAttribute("width")} ${viewBox.getAttribute("height")}`
     )
+    ebid("track-name").textContent = ""
     const tracksPre = ebid("tracks-pre")
     const tracksTarget = ebid("tracks-target")
     const listenButton = ebid("listen-button")
@@ -293,6 +352,7 @@ const Eolian = () => {
 
     addClass(listenButton, "button")
     listenButton.onclick = moveTracks
+
     setLoaded(true)
 
     if (typeof window !== "undefined")
@@ -304,8 +364,26 @@ const Eolian = () => {
       window.open("https://open.spotify.com/artist/4UynZk3RxczOK1AwaHR5ha")
   }
 
+  // This could be backwards where the presentational layer (the SVG)
+  // is at the top of the hierarchy since it needs to load before any
+  // interactions can be defined
+
+  // So a control layer would be defined once that is loaded (and even the window)
+  // to reduce need for checking for objects that are not present.
+
+  // This presenational layer could have more complex SVG logic that builds various
+  // components of a frontend that can then be unified once they are all loaded
+
+  // This would allow control layers to be more modular
   return (
     <>
+      <div>
+        <SVG
+          style={{ width: 20 }}
+          id="slider"
+          src={require("../images/star.svg")}
+        />
+      </div>
       {showPopup && !context.chosenDevice && (
         <SignInPopup showPopup={setShowPopup} />
       )}
@@ -315,10 +393,20 @@ const Eolian = () => {
           pickDevice={context.pickDevice}
           setShowDevicePicker={setShowDevicePicker}
           queuedTrack={queuedTrack}
-          cursor={cursor}
         />
       )}
       <SVG src={src} onLoad={setup} />
+      <input
+        type="range"
+        min="0"
+        max="100"
+        defaultValue="50"
+        className="slider"
+        id="volume-slider"
+        onChange={volumeChange}
+        onMouseUp={() => (ebid("star").style.display = "none")}
+        onTouchEnd={() => (ebid("star").style.display = "none")}
+      />
     </>
   )
 }

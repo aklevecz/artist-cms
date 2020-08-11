@@ -115,6 +115,11 @@ const Provider = ({ children }) => {
     getUserDevices()
       .then(d => {
         setDevices(d.devices)
+        d.devices.map(device => {
+          if (device.is_active) {
+            setIsPlaying(true)
+          }
+        })
         setSpotifyAuth(true)
       })
       .catch(error => {
@@ -175,14 +180,15 @@ const Provider = ({ children }) => {
     setIsPlaying(false)
   }
 
-  const playSpotifyTrack = (playlistUri, trackUri) => {
+  const playSpotifyTrack = async (playlistUri, trackUri) => {
     if (isPlaying && scPlayer) pauseSoundcloud()
     setPlayerType("spotify")
     if (playlistUri) {
-      startPlayingPlaylist(playlistUri, trackUri)
+      await startPlayingPlaylist(playlistUri, trackUri)
     } else {
-      startPlayingPlaylist(undefined, undefined, undefined, trackUri)
+      await startPlayingPlaylist(undefined, undefined, undefined, trackUri)
     }
+    getDevices()
   }
 
   const resumePlayback = () => {
