@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
     if (!code) return
     var redirect_uri = `${window.location.protocol}//${
       window.location.hostname
-    }${process.env.NODE_ENV === "development" && ":8000"}`
+    }${process.env.NODE_ENV === "development" ? ":8000" : ""}`
     fetch("https://accounts.spotify.com/api/token", {
       body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
         redirect_uri
