@@ -8,7 +8,9 @@ const Layout = ({ children }) => {
   useEffect(() => {
     const code = window.location.search.split("?code=")[1]
     if (!code) return
-    const redirect_uri = process.env.GATSBY_REDIRECT_URI
+    var redirect_uri = `${window.location.protocol}//${
+      window.location.hostname
+    }${process.env.NODE_ENV === "development" && ":8000"}`
     fetch("https://accounts.spotify.com/api/token", {
       body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
         redirect_uri
