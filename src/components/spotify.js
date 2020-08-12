@@ -2,6 +2,7 @@ import React from "react"
 
 const Spotify = () => {
   const spotAuth = () => {
+    if (typeof window === "undefined") return
     const url = `${window.location.protocol}//${window.location.hostname}`
     var scopes =
       "streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state"
