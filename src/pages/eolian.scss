@@ -39,7 +39,7 @@ button,
 
 .device-box-container {
   position: absolute;
-  padding: 11px 15px 5px;
+  padding: 6px 15px 3px;
   background: #8a8eff;
   border-radius: 5px;
   text-align: "center";
@@ -48,10 +48,10 @@ button,
 
 .bottom-notch {
   position: absolute;
-  left: 38%;
+  left: 39.7%;
   width: 40px;
   bottom: -10px;
-
+  // opacity: 0;
   polyline {
     fill: #8a8eff !important;
   }
@@ -62,12 +62,23 @@ button,
   position: absolute;
   bottom: 0;
   right: 0;
-  height: 10px;
+  height: 50px;
   opacity: 0;
+  cursor: pointer;
 }
 
 // this is the slider icon
-#slider {
+#star-container {
   position: absolute;
   display: "none";
+}
+#muted-cross {
+  display: none;
+}
+#static-volume-icon {
+  cursor: pointer;
+}
+
+#volume-target {
+  opacity: 0;
 }

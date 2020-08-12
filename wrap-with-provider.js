@@ -222,7 +222,7 @@ const Provider = ({ children }) => {
         localStorage.setItem("deviceId", device_id)
         getDevices()
         resolve()
-        //   setChosenDevice(device_id)
+        setChosenDevice(device_id)
 
         // Error handling
         player.addListener("initialization_error", ({ message }) => {

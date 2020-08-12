@@ -1,4 +1,5 @@
 export default () => {
+  console.log(localStorage.getItem("deviceId"))
   return fetch(
     `https://api.spotify.com/v1/me/player/pause?device_id=${localStorage.getItem(
       "deviceId"
